@@ -15,8 +15,9 @@ rm -rf "$DMG_STAGING"
 mkdir -p "$DMG_STAGING"
 cp -R "$APP" "$DMG_STAGING/"
 if [ -f "$ROOT/packaging/fix_permissions.command" ]; then
-  cp "$ROOT/packaging/fix_permissions.command" "$DMG_STAGING/fix_permissions.command"
-  chmod +x "$DMG_STAGING/fix_permissions.command"
+  # Name it clearly so users know to double-click it on first launch
+  cp "$ROOT/packaging/fix_permissions.command" "$DMG_STAGING/Open Wellnest (first time).command"
+  chmod +x "$DMG_STAGING/Open Wellnest (first time).command"
 fi
 chmod -R u+rwX,a+rX "$DMG_STAGING"
 xattr -cr "$DMG_STAGING" 2>/dev/null || true

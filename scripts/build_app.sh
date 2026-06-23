@@ -95,8 +95,11 @@ rsync -a \
   --exclude '_archive' \
   "$ROOT/" "$PAYLOAD/"
 
+# Shallow ad-hoc sign only the main executable — deep signing bundled Python
+# binaries causes Gatekeeper "damaged" errors on macOS 13+ without a paid
+# Apple Developer ID. Users run "Open Wellnest.command" from the DMG instead.
 if command -v codesign >/dev/null 2>&1; then
-  codesign --force --deep --sign - "$APP" 2>/dev/null || true
+  codesign --force --sign - "$APP/Contents/MacOS/wellnest" 2>/dev/null || true
 fi
 
 echo ""
