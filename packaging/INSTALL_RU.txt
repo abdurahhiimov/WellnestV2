@@ -1,0 +1,62 @@
+Zamira Health — установка (5 минут)
+====================================
+
+ЕСЛИ ОШИБКА pip / mcp / Python
+------------------------------
+Mac часто имеет старый Python 3.9 — нужен 3.10+.
+
+В Терминале (Aziz):
+
+  brew install python@3.12
+  rm -rf ~/Library/Application\ Support/Zamira\ Health/venv
+  /opt/homebrew/bin/python3.12 -m venv ~/Library/Application\ Support/Zamira\ Health/venv
+  ~/Library/Application\ Support/Zamira\ Health/venv/bin/pip install -r "/Applications/Zamira Health.app/Contents/Resources/zamira-health/requirements-app.txt"
+
+Потом ПКМ → Открыть на Zamira Health.
+
+Для Claude (MCP) — после того как приложение работает:
+
+  cd "/Applications/Zamira Health.app/Contents/Resources/zamira-health"
+  ~/Library/Application\ Support/Zamira\ Health/venv/bin/python scripts/install_mcp.py
+
+ЕСЛИ macOS ПИШЕТ «НЕТ РАЗРЕШЕНИЯ ДЛЯ ЧТЕНИЯ» (dmg, txt, md)
+------------------------------------------------------------
+Это бывает после AirDrop / почты / мессенджера. Нужно один раз:
+
+  A) Дважды нажмите: fix_permissions.command (в этой же папке после открытия dmg)
+     ИЛИ
+  B) Aziz открывает Терминал на Mac и вставляет:
+
+     xattr -cr ~/Downloads/ZamiraHealth.dmg
+     chmod u+rw ~/Downloads/ZamiraHealth.dmg
+     open ~/Downloads/ZamiraHealth.dmg
+
+  (Если файл на Рабочем столе — замените Downloads на Desktop)
+
+  Для txt/md после открытия dmg:
+     xattr -cr "/Volumes/Zamira Health"
+
+УСТАНОВКА
+--------
+1. Откройте ZamiraHealth.dmg (ПКМ → Открыть, если macOS блокирует)
+2. Перетащите «Zamira Health» в папку «Applications»
+3. Первый запуск приложения — см. «Первый запуск.txt»:
+   ПКМ на иконку → «Открыть» → «Открыть»
+   (macOS пишет про «вредоносное ПО» — это нормально для неподписанных программ)
+4. Дважды нажмите иконку — откроется дашборд в Safari
+
+Claude (один раз, поможет Aziz):
+- Сначала один раз открыть Zamira Health (ПКМ → Открыть) — дождаться дашборда
+- Потом в Терминале:
+  cd "/Applications/Zamira Health.app/Contents/Resources/zamira-health"
+  ./scripts/install_mcp.py
+  (venv создаётся автоматически в ~/Library/Application Support/Zamira Health/)
+
+Каждый день:
+- Нажать иконку Zamira Health → дашборд
+- Новые анализы → фото в Claude → «вот»
+- Вечером Claude спросит, как прошёл день
+
+Руководство: «Руководство — как пользоваться.md»
+
+Данные: ~/Desktop/HEALTH/ (только на этом Mac)

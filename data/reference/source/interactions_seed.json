@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "note": "Curated clinical interactions for Zamira stack (RxNav DDI API discontinued 2024). Verify with physician.",
+  "interactions": [
+    {
+      "drug_a": "levothyroxine",
+      "drug_b": "estradiol",
+      "severity": "moderate",
+      "description_ru": "Эстроген (ЗГТ) может повышать уровень транспортных белков щитовидных гормонов и снижать свободный Т4 — иногда требуется коррекция дозы левотироксина. Контроль ТТГ после начала/смены дозы Дивигеля.",
+      "sources": ["ATA hypothyroidism guideline 2014", "Clinical pharmacology — estrogen-thyroid binding"]
+    },
+    {
+      "drug_a": "levothyroxine",
+      "drug_b": "cabergoline",
+      "severity": "low",
+      "description_ru": "Прямых значимых взаимодействий обычно нет. Оба препарата требуют отдельного мониторинга (ТТГ и пролактин).",
+      "sources": ["Lexicomp interaction summary — no major interaction"]
+    },
+    {
+      "drug_a": "cabergoline",
+      "drug_b": "estradiol",
+      "severity": "low",
+      "description_ru": "Прямых клинически значимых взаимодействий обычно нет. Пролактин и эстрадиол контролируются отдельно по плану эндокринолога.",
+      "sources": ["Clinical review — dopamine agonist + HRT"]
+    },
+    {
+      "drug_a": "levothyroxine",
+      "drug_b": "calcium_iron_supplements",
+      "severity": "moderate",
+      "description_ru": "Кальций, железо и некоторые нутрицевтики снижают всасывание левотироксина — принимать Эутирокс натощак, добавки через ≥4 часа.",
+      "sources": ["FDA levothyroxine label", "ATA hypothyroidism guideline"]
+    }
+  ]
+}

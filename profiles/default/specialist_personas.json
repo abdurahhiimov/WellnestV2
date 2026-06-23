@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "note": "Generic, non-personal quality scaffolding used as a fallback for any profile. Personal specialist checklists live per-profile and are built from the profile's conditions.",
+  "quality_rules": {
+    "forbidden_alone": [
+      "see a doctor",
+      "consult your physician",
+      "talk to your doctor",
+      "обсудите с врачом",
+      "проконсультируйтесь с врачом"
+    ],
+    "required_per_specialist": [
+      "see: connected text with numbers and dates",
+      "concerns: specific risks / gaps",
+      "recommendations: at least 2 actionable items (what, when, why)",
+      "evidence: at least 2 sources (a measurement from the data + a guideline where relevant)"
+    ]
+  },
+  "specialists": {}
+}

@@ -1,0 +1,23 @@
+{
+  "_comment": "Copy to ~/Desktop/HEALTH/data/integrations.json (one-time setup by family)",
+  "openrouter": {
+    "_comment": "Free key from https://openrouter.ai/keys — makes the dashboard generate the consilium itself (no Claude Desktop).",
+    "api_key": "YOUR_OPENROUTER_API_KEY",
+    "model": "openai/gpt-oss-120b:free"
+  },
+  "openevidence": {
+    "_comment": "ENTERPRISE ONLY. Requires BAA + org_id from [email protected]. Leave blank; the dashboard already uses free Europe PMC/PubMed for real citations.",
+    "api_key": "",
+    "org_id": "",
+    "base_url": "https://api.openevidence.com"
+  },
+  "oura": {
+    "client_id": "YOUR_OURA_CLIENT_ID",
+    "client_secret": "YOUR_OURA_CLIENT_SECRET",
+    "redirect_uri": "http://127.0.0.1:8787/oura/callback"
+  },
+  "health_auto_export": {
+    "watch_folder": "health_auto_export",
+    "setup_guide_url": "https://healthyapps.dev/"
+  }
+}

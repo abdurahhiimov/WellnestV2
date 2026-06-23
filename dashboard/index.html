@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zamira Health</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070b12;
+      --bg2: #0d1420;
+      --surface: rgba(255,255,255,0.045);
+      --surface2: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.08);
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #2dd4bf;
+      --accent2: #818cf8;
+      --good: #34d399;
+      --caution: #fbbf24;
+      --warn: #f87171;
+      --radius: 16px;
+      --shadow: 0 8px 32px rgba(0,0,0,0.35);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(45,212,191,0.12), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(129,140,248,0.1), transparent);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+    .animate { animation: fadeUp 0.45s ease both; }
+    .shell { max-width: 1100px; margin: 0 auto; padding: 1.25rem 1.5rem 3rem; }
+    header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;
+    }
+    .brand h1 {
+      font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .brand p { color: var(--muted); font-size: 0.875rem; margin-top: 0.25rem; }
+    .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .btn {
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text); padding: 0.55rem 1rem; border-radius: 999px;
+      font-size: 0.8125rem; font-weight: 500; cursor: pointer;
+      transition: all 0.2s; font-family: inherit;
+    }
+    .btn:hover { background: var(--surface2); border-color: rgba(45,212,191,0.35); }
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, var(--accent));
+      border: none; color: #071018; font-weight: 600;
+    }
+    .btn-primary:hover { filter: brightness(1.08); }
+    .systems {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.75rem; margin-bottom: 1.5rem;
+    }
+    .sys-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1rem;
+      backdrop-filter: blur(12px); transition: transform 0.2s;
+    }
+    .sys-card:hover { transform: translateY(-2px); }
+    .sys-card .icon { font-size: 1.25rem; }
+    .sys-card .title { font-size: 0.8125rem; color: var(--muted); margin-top: 0.35rem; }
+    .sys-card .dot {
+      width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px;
+    }
+    .dot-good { background: var(--good); box-shadow: 0 0 8px var(--good); }
+    .dot-caution { background: var(--caution); }
+    .dot-warn { background: var(--warn); }
+    .dot-unknown { background: var(--muted); }
+    nav {
+      display: flex; gap: 0.35rem; overflow-x: auto; padding-bottom: 0.5rem;
+      margin-bottom: 1.25rem; scrollbar-width: none;
+    }
+    nav::-webkit-scrollbar { display: none; }
+    nav button {
+      flex-shrink: 0; background: transparent; border: 1px solid transparent;
+      color: var(--muted); padding: 0.5rem 1rem; border-radius: 999px;
+      cursor: pointer; font-size: 0.875rem; font-weight: 500; font-family: inherit;
+      transition: all 0.2s;
+    }
+    nav button.active {
+      background: var(--surface2); color: var(--text);
+      border-color: var(--border);
+    }
+    .panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem;
+      box-shadow: var(--shadow); backdrop-filter: blur(16px);
+    }
+    .panel h3 { font-size: 0.9375rem; font-weight: 600; margin-bottom: 1rem; }
+    .hidden { display: none !important; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+    .metric-big { font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; }
+    .metric-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .chart-card { min-height: 220px; }
+    .chart-card canvas { max-height: 160px; }
+    .chart-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.75rem; }
+    .chart-head .val { font-size: 1.5rem; font-weight: 700; }
+    .chart-head .unit { font-size: 0.75rem; color: var(--muted); margin-left: 4px; }
+    .flag-low { color: var(--caution); }
+    .flag-high { color: var(--warn); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    th, td { text-align: left; padding: 0.65rem 0.5rem; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .priority-urgent { color: var(--warn); }
+    .priority-important { color: var(--caution); }
+    .today-strip {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.75rem;
+    }
+    .today-item {
+      background: var(--bg2); border-radius: 12px; padding: 0.85rem;
+      border: 1px solid var(--border);
+    }
+    .connect-hero {
+      text-align: center; padding: 2rem 1rem;
+    }
+    .connect-hero .ring-icon {
+      font-size: 3rem; margin-bottom: 1rem;
+      filter: drop-shadow(0 0 24px rgba(129,140,248,0.5));
+    }
+    .connect-steps { text-align: left; max-width: 480px; margin: 1.5rem auto 0; color: var(--muted); font-size: 0.875rem; }
+    .connect-steps li { margin-bottom: 0.5rem; }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 999px; font-size: 0.75rem;
+      background: var(--bg2); border: 1px solid var(--border);
+    }
+    .updated { font-size: 0.75rem; color: var(--muted); }
+    .server-banner {
+      background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.35);
+      border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1rem;
+      font-size: 0.875rem; line-height: 1.45;
+    }
+    .server-banner a { color: var(--accent); }
+    .server-banner.hidden { display: none; }
+    .explain-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; min-width: 22px; padding: 0; margin-left: 6px;
+      border-radius: 50%; border: 1px solid var(--border); background: var(--bg2);
+      color: var(--muted); font-size: 0.7rem; font-weight: 700; cursor: pointer;
+      vertical-align: middle; line-height: 1; font-family: inherit;
+      position: relative; z-index: 2; flex-shrink: 0;
+    }
+    .explain-btn:hover { color: var(--accent); border-color: rgba(45,212,191,0.45); background: var(--surface2); }
+    .sys-card .icon-img {
+      width: 28px; height: 28px; object-fit: contain; display: block;
+      border-radius: 6px; background: rgba(255,255,255,0.92); padding: 2px;
+    }
+    .panel-head, .sys-card-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .panel-head h3, .section-head { display: flex; align-items: center; gap: 0.25rem; margin: 0; }
+    .sys-card { position: relative; }
+    .sys-card-head { margin-bottom: 0.35rem; }
+    .explain-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 1000;
+      display: flex; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .explain-overlay.hidden { display: none; }
+    .explain-modal {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+      max-width: 480px; width: 100%; max-height: 80vh; overflow: auto;
+      padding: 1.25rem 1.35rem; box-shadow: var(--shadow);
+    }
+    .explain-modal h4 { font-size: 1rem; margin-bottom: 0.75rem; }
+    .explain-modal p, .explain-modal li { font-size: 0.875rem; color: var(--muted); margin-bottom: 0.65rem; white-space: pre-line; }
+    .explain-modal .explain-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-top: 0.75rem; margin-bottom: 0.35rem; }
+    .explain-modal .explain-source { font-size: 0.8125rem; background: var(--surface); border-radius: 8px; padding: 0.65rem 0.75rem; color: var(--text); }
+    .explain-modal .explain-close {
+      margin-top: 1rem; width: 100%; padding: 0.6rem; border-radius: 10px;
+      border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      cursor: pointer; font-family: inherit;
+    }
+    .header-help-row { display: flex; align-items: center; gap: 0.35rem; margin-top: 0.35rem; }
+    .claude-hint {
+      font-size: 0.75rem; color: var(--muted); margin-bottom: 1rem;
+      padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px dashed var(--border);
+    }
+    .claude-hint a, .claude-hint button.link-btn {
+      color: var(--accent2); cursor: pointer; text-decoration: underline;
+      background: none; border: none; font: inherit; padding: 0;
+    }
+    .lang-switch { display: flex; gap: 2px; margin-right: 0.25rem; }
+    .lang-btn {
+      border: 1px solid var(--border); background: var(--surface); color: var(--muted);
+      padding: 0.45rem 0.65rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+    }
+    .lang-btn.active { color: var(--text); border-color: rgba(45,212,191,0.45); background: var(--surface2); }
+    .btn-help.explain-btn { width: auto; min-width: auto; height: auto; border-radius: 999px; padding: 0.55rem 0.85rem; font-size: 0.8125rem; }
+    .brief-panel {
+      background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(45,212,191,0.1));
+      border: 1px solid rgba(45,212,191,0.25); border-radius: var(--radius);
+      padding: 1.15rem 1.25rem; margin-bottom: 1rem;
+    }
+    .brief-panel h3 { font-size: 0.9375rem; margin-bottom: 0.5rem; color: var(--accent); }
+    .brief-headline { font-size: 0.875rem; color: var(--text); margin-bottom: 0.75rem; }
+    .brief-list { list-style: none; margin: 0; padding: 0; }
+    .brief-list li {
+      font-size: 0.8125rem; padding: 0.45rem 0; border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 0.5rem;
+    }
+    .brief-list li:last-child { border-bottom: none; }
+    .brief-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 0.35rem; flex-shrink: 0; }
+    .brief-urgent { background: var(--warn); }
+    .brief-important, .brief-caution { background: var(--caution); }
+    .brief-warn { background: var(--warn); }
+    .checkin-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-top: 0.5rem; }
+    .checkin-day {
+      text-align: center; min-width: 44px; padding: 0.4rem 0.35rem; border-radius: 10px;
+      background: var(--bg2); border: 1px solid var(--border); font-size: 0.65rem;
+    }
+    .checkin-day .score { font-size: 1rem; font-weight: 700; display: block; margin-bottom: 2px; }
+    .checkin-empty { font-size: 0.8125rem; color: var(--muted); }
+    .checkin-hint { font-size: 0.75rem; color: var(--muted); margin-top: 0.65rem; }
+    .checkin-banner {
+      background: linear-gradient(135deg, rgba(245,158,11,0.14), rgba(99,102,241,0.1));
+      border: 1px solid rgba(245,158,11,0.35); border-radius: var(--radius);
+      padding: 0.9rem 1.1rem; margin-bottom: 1rem; font-size: 0.875rem;
+    }
+    .checkin-banner.hidden { display: none; }
+    .checkin-banner strong { color: var(--accent); display: block; margin-bottom: 0.35rem; }
+    .checkin-banner p { margin: 0; color: var(--text); line-height: 1.45; }
+    .checkin-guide {
+      margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);
+      font-size: 0.8125rem; color: var(--text); line-height: 1.5;
+    }
+    .checkin-guide h4 { font-size: 0.8125rem; color: var(--accent); margin: 0.85rem 0 0.4rem; font-weight: 600; }
+    .checkin-guide h4:first-child { margin-top: 0; }
+    .checkin-guide ol, .checkin-guide ul { margin: 0.35rem 0 0; padding-left: 1.2rem; }
+    .checkin-guide li { margin: 0.25rem 0; }
+    .checkin-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.35rem; }
+    @media (max-width: 520px) { .checkin-metrics { grid-template-columns: 1fr; } }
+    .checkin-metric {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 0.55rem 0.65rem; font-size: 0.75rem;
+    }
+    .checkin-metric b { display: block; font-size: 0.8125rem; margin-bottom: 0.2rem; color: var(--text); }
+    .checkin-phrases {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 0.55rem 0.75rem; margin-top: 0.35rem; font-style: italic; color: var(--muted);
+    }
+    .checkin-status-ok { color: var(--good); font-size: 0.8125rem; margin-top: 0.5rem; }
+    .survey-panel { margin-top: 0.5rem; }
+    .survey-progress { display: flex; gap: 6px; margin-bottom: 1rem; }
+    .survey-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+    .survey-dot.active { background: var(--accent); }
+    .survey-dot.done { background: var(--good); }
+    .survey-q { font-size: 1rem; font-weight: 600; margin-bottom: 0.85rem; color: var(--text); }
+    .survey-sub { font-size: 0.8125rem; color: var(--muted); margin: -0.5rem 0 0.85rem; }
+    .survey-mood { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .survey-opt {
+      flex: 1; min-width: 56px; text-align: center; padding: 0.65rem 0.4rem; border-radius: 12px;
+      border: 1px solid var(--border); background: var(--bg2); cursor: pointer; font-size: 1.35rem;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .survey-opt:hover { border-color: rgba(45,212,191,0.45); }
+    .survey-opt.selected { border-color: var(--accent); background: rgba(45,212,191,0.12); }
+    .survey-opt .lbl { display: block; font-size: 0.65rem; color: var(--muted); margin-top: 4px; }
+    .survey-sleep { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+    .survey-sleep .survey-opt { font-size: 1.5rem; min-width: 0; }
+    .survey-chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+    .survey-chip {
+      padding: 0.45rem 0.75rem; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--bg2); font-size: 0.8125rem; cursor: pointer;
+    }
+    .survey-chip.selected { border-color: var(--accent); color: var(--accent); background: rgba(45,212,191,0.1); }
+    .survey-chip.none { font-style: italic; color: var(--muted); }
+    .survey-note {
+      width: 100%; min-height: 56px; padding: 0.65rem 0.75rem; border-radius: 10px;
+      border: 1px solid var(--border); background: var(--bg2); color: var(--text);
+      font-family: inherit; font-size: 0.875rem; resize: vertical;
+    }
+    .survey-actions { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+    .survey-done { text-align: center; padding: 1rem 0; color: var(--good); font-size: 0.9375rem; }
+    .consilium-teaser {
+      font-size: 0.8125rem; color: var(--muted); margin-top: 0.75rem; padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+    .consilium-panel .spec-inline {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+      padding: 0.85rem 1rem; margin-bottom: 0.65rem;
+    }
+    .consilium-panel .spec-inline h4 { margin: 0 0 0.35rem; font-size: 0.9375rem; color: var(--accent); }
+    .consilium-panel .spec-inline .sec-mini { margin-top: 0.45rem; font-size: 0.75rem; color: var(--muted); }
+    .consilium-panel .sec-mini b { color: var(--text); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .consilium-wait {
+      background: rgba(99,102,241,0.12); border: 1px solid rgba(129,140,248,0.35);
+      border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.75rem; font-size: 0.875rem;
+    }
+    .consilium-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+    .consilium-body-rich { display: flex; flex-direction: column; gap: 0.85rem; }
+    .spec-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 1rem 1.1rem;
+    }
+    .spec-card.spec-gp { background: rgba(99,102,241,0.08); border-color: rgba(129,140,248,0.35); }
+    .spec-head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .spec-emoji { font-size: 1.25rem; line-height: 1; }
+    .spec-title { margin: 0; font-size: 1rem; color: var(--accent); font-weight: 600; }
+    .spec-focus { margin: 0 0 0.65rem; font-size: 0.75rem; color: var(--muted); }
+    .spec-sec { margin-bottom: 0.75rem; }
+    .spec-sec:last-child { margin-bottom: 0; }
+    .spec-sec h5 { margin: 0 0 0.35rem; font-size: 0.8125rem; font-weight: 600; color: var(--text); }
+    .spec-p { margin: 0 0 0.4rem; font-size: 0.875rem; line-height: 1.5; color: var(--text); }
+    .spec-sec ul { margin: 0.2rem 0 0; padding-left: 1.15rem; font-size: 0.875rem; line-height: 1.45; }
+    .spec-sec li { margin-bottom: 0.3rem; }
+    .ev-list { list-style: none; padding: 0; margin: 0.25rem 0 0; }
+    .ev-item {
+      font-size: 0.8125rem; padding: 0.45rem 0.55rem; margin-bottom: 0.35rem;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; line-height: 1.4;
+    }
+    .ev-kind { font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent); margin-right: 0.35rem; }
+    .ev-meta { display: block; color: var(--muted); margin-top: 0.2rem; font-size: 0.75rem; }
+    .ev-item a { color: var(--accent2); text-decoration: underline; }
+    .symptom-ask-panel { margin-top: 0.25rem; }
+    .symptom-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.65rem; }
+    .symptom-chip {
+      border: 1px solid var(--border); background: var(--bg2); color: var(--text);
+      border-radius: 999px; padding: 0.35rem 0.75rem; font-size: 0.8125rem; cursor: pointer; font-family: inherit;
+    }
+    .symptom-chip:hover { border-color: rgba(45,212,191,0.45); }
+    .symptom-input {
+      width: 100%; min-height: 72px; resize: vertical; border-radius: 12px;
+      border: 1px solid var(--border); background: var(--bg2); color: var(--text);
+      padding: 0.75rem 0.85rem; font-family: inherit; font-size: 0.9375rem; line-height: 1.45;
+    }
+    .symptom-input:focus { outline: none; border-color: rgba(45,212,191,0.55); }
+    .sym-answer { margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px dashed var(--border); }
+    .sym-q { font-size: 0.8125rem; color: var(--muted); margin: 0 0 0.65rem; }
+    .sym-doctor { font-size: 0.8125rem; color: var(--caution); margin: 0.75rem 0 0; padding: 0.55rem 0.65rem; background: rgba(251,191,36,0.08); border-radius: 8px; }
+    .sym-wait { font-size: 0.875rem; color: var(--muted); padding: 0.65rem 0; }
+  </style>
+  <!-- ZAMIRA_DASHBOARD_DATA -->
+  <script src="vendor/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="shell animate" id="app">
+    <div class="server-banner hidden" id="server-banner">
+      Синхронизация работает только через локальный сервер.
+      Запустите <strong>start_zamira.command</strong>, затем откройте
+      <a id="server-link" href="http://127.0.0.1:8787/dashboard">http://127.0.0.1:8787/dashboard</a>.
+    </div>
+    <header>
+      <div class="brand">
+        <h1 id="patient-name">Zamira Health</h1>
+        <p id="patient-meta"></p>
+        <p class="updated" id="updated-at"></p>
+      </div>
+      <div class="actions">
+        <div class="lang-switch">
+          <button type="button" class="lang-btn active" id="lang-ru">RU</button>
+          <button type="button" class="lang-btn" id="lang-en">EN</button>
+        </div>
+        <button type="button" class="btn btn-help explain-btn" id="btn-help-dashboard">? Помощь</button>
+        <button type="button" class="btn" id="btn-consilium" data-i18n="consilium">Консилиум</button>
+        <button type="button" class="btn" id="btn-visit-pack" data-i18n="visitPack">Для врача</button>
+        <button type="button" class="btn" id="btn-sync-hae">↻ Apple Health</button>
+        <button type="button" class="btn btn-primary" id="btn-refresh">Обновить</button>
+      </div>
+    </header>
+
+    <div class="claude-hint" id="claude-hint">
+      <span id="hint-text"></span>
+      <button type="button" class="link-btn" id="link-claude-help">Подробнее</button>
+    </div>
+
+    <div class="systems" id="systems-row"></div>
+
+    <nav id="tabs">
+      <button type="button" class="active" data-tab="today" data-i18n="tabToday">Сегодня</button>
+      <button type="button" data-tab="consilium" data-i18n="tabConsilium">Консилиум</button>
+      <button type="button" data-tab="charts" data-i18n="tabCharts">Графики</button>
+      <button type="button" data-tab="labs" data-i18n="tabLabs">Анализы</button>
+      <button type="button" data-tab="tasks" data-i18n="tabTasks">Задачи</button>
+      <button type="button" data-tab="meds" data-i18n="tabMeds">Препараты</button>
+      <button type="button" data-tab="connect" data-i18n="tabConnect">Подключения</button>
+    </nav>
+
+    <section id="tab-today">
+      <div class="checkin-banner hidden" id="checkin-banner">
+        <strong id="checkin-banner-title"></strong>
+        <p id="checkin-banner-body"></p>
+      </div>
+      <div class="panel consilium-teaser" id="consilium-teaser">
+        <p class="checkin-hint" style="margin:0">
+          <span data-i18n="consiliumTeaserToday">Разбор врачей — вкладка «Консилиум» или кнопка в шапке.</span>
+          <button type="button" class="link-btn" id="link-go-consilium" data-i18n="consiliumTeaserGo">Открыть →</button>
+        </p>
+      </div>
+      <div class="brief-panel" id="weekly-brief-panel">
+        <h3 class="section-head"><span data-i18n="weeklyBrief">На этой неделе</span> <button type="button" class="explain-btn" data-section-help="weekly_brief">?</button></h3>
+        <p class="brief-headline" id="brief-headline"></p>
+        <ul class="brief-list" id="brief-list"></ul>
+      </div>
+      <div class="panel" id="symptom-survey-panel">
+        <div class="panel-head">
+          <h3 class="section-head">
+            <span data-i18n="symptomSurvey">Как вы себя чувствуете?</span>
+            <button type="button" class="explain-btn" data-section-help="symptom_survey">?</button>
+          </h3>
+        </div>
+        <div id="survey-body" class="survey-panel"></div>
+        <div class="checkin-row" id="checkin-row"></div>
+        <p class="checkin-hint" id="checkin-hint"></p>
+        <p class="checkin-status-ok hidden" id="checkin-status-ok"></p>
+      </div>
+      <div class="panel symptom-ask-panel" id="symptom-ask-panel">
+        <div class="panel-head">
+          <h3 class="section-head">
+            <span data-i18n="symptomAskTitle">Спросите о симптоме</span>
+            <button type="button" class="explain-btn" data-section-help="symptom_ask">?</button>
+          </h3>
+        </div>
+        <p class="checkin-hint" data-i18n="symptomAskHint" style="margin-top:0">Коротко своими словами — Claude ответит на дашборде с объяснением «почему».</p>
+        <div class="symptom-chips" id="symptom-chips"></div>
+        <textarea class="symptom-input" id="symptom-input" placeholder="Например: устала, болит плечо, плохо спала…"></textarea>
+        <div class="survey-actions" style="margin-top:0.65rem">
+          <button type="button" class="btn btn-primary" id="btn-symptom-ask" data-i18n="symptomAskBtn">Спросить Claude</button>
+        </div>
+        <div id="symptom-ask-status"></div>
+        <div id="symptom-answer-body"></div>
+      </div>
+      <div class="panel hidden" id="checkin-guide-panel">
+        <div class="panel-head"><h3 class="section-head"><span data-i18n="eveningCheckin">Claude check-in</span> <button type="button" class="explain-btn" data-section-help="checkin">?</button></h3></div>
+        <div class="checkin-guide" id="checkin-guide"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3 class="section-head"><span data-i18n="today">Сегодня</span> <button type="button" class="explain-btn" data-section-help="today">?</button></h3></div>
+        <div class="today-strip" id="today-strip"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3 class="section-head"><span data-i18n="openTasks">Открытые задачи</span> <button type="button" class="explain-btn" data-section-help="tasks">?</button></h3></div>
+        <div id="today-tasks-preview"></div>
+      </div>
+    </section>
+
+    <section id="tab-consilium" class="hidden">
+      <div class="panel consilium-panel" id="consilium-panel">
+        <div class="panel-head">
+          <h3 class="section-head">
+            <span data-i18n="consiliumTitle">Консилиум врачей</span>
+            <button type="button" class="explain-btn" data-section-help="consilium">?</button>
+          </h3>
+        </div>
+        <p class="checkin-hint" data-i18n="consiliumIntro" style="margin-top:0;margin-bottom:0.85rem">
+          Мнение «виртуальных» специалистов по вашим анализам и задачам. Не заменяет визит к врачу.
+        </p>
+        <div class="consilium-actions">
+          <button type="button" class="btn btn-primary" id="btn-claude-consilium" data-i18n="consiliumClaude">Полный разбор врачей</button>
+          <button type="button" class="btn" id="btn-quick-consilium" data-i18n="consiliumQuick">Черновик (авто)</button>
+        </div>
+        <div id="consilium-status"></div>
+        <div id="consilium-body" class="consilium-body-rich"></div>
+      </div>
+    </section>
+
+    <section id="tab-charts" class="hidden">
+      <h3 class="section-head" style="margin-bottom:1rem;font-size:0.9375rem;color:var(--muted)">
+        <span data-i18n="chartsLabs">Анализы — динамика</span> <button type="button" class="explain-btn" data-section-help="charts">?</button>
+      </h3>
+      <div class="grid-2" id="lab-charts"></div>
+      <h3 style="margin:1.5rem 0 1rem;font-size:0.9375rem;color:var(--muted)" data-i18n="wearables">Носимые устройства</h3>
+      <div class="grid-2" id="wearable-charts"></div>
+    </section>
+
+    <section id="tab-labs" class="hidden">
+      <div class="panel">
+        <div class="panel-head"><h3 class="section-head"><span data-i18n="labsTable">Таблица анализов</span> <button type="button" class="explain-btn" data-section-help="labs">?</button></h3></div>
+        <table>
+          <thead><tr>
+            <th data-i18n="thDate">Дата</th><th data-i18n="thTest">Тест</th><th data-i18n="thValue">Значение</th><th data-i18n="thFresh">Свежесть</th><th></th>
+          </tr></thead>
+          <tbody id="labs-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-tasks" class="hidden">
+      <div class="panel">
+        <div class="panel-head"><h3 class="section-head"><span data-i18n="tasks">Задачи</span> <button type="button" class="explain-btn" data-section-help="tasks">?</button></h3></div>
+        <table>
+          <thead><tr>
+            <th data-i18n="thTask">Задача</th><th data-i18n="thPriority">Приоритет</th><th data-i18n="thCategory">Категория</th>
+          </tr></thead>
+          <tbody id="tasks-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-meds" class="hidden">
+      <div class="panel">
+        <div class="panel-head"><h3 class="section-head"><span data-i18n="meds">Препараты</span> <button type="button" class="explain-btn" data-section-help="meds">?</button></h3></div>
+        <table>
+          <thead><tr>
+            <th data-i18n="thMed">Препарат</th><th data-i18n="thDose">Доза</th><th data-i18n="thPurpose">Назначение</th>
+          </tr></thead>
+          <tbody id="meds-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-connect" class="hidden">
+      <div class="panel">
+        <h3 style="display:flex;align-items:center;gap:0.35rem">🧠 <span data-i18n="engineTitle">Движок разбора (автономно)</span></h3>
+        <p style="color:var(--muted);font-size:0.875rem;margin-bottom:0.85rem" data-i18n="engineDesc">
+          Бесплатный ключ OpenRouter — и дашборд сам делает полный разбор врачей и отвечает на вопросы. Без Claude Desktop.
+        </p>
+        <p id="engine-status" style="margin-bottom:0.85rem"></p>
+        <div style="display:flex;flex-direction:column;gap:0.6rem;max-width:520px">
+          <input type="password" id="engine-key" placeholder="sk-or-v1-..." autocomplete="off"
+            style="padding:0.6rem 0.75rem;border-radius:8px;border:1px solid var(--border,#333);background:rgba(255,255,255,0.04);color:inherit">
+          <select id="engine-model" style="padding:0.6rem 0.75rem;border-radius:8px;border:1px solid var(--border,#333);background:rgba(255,255,255,0.04);color:inherit">
+            <option value="deepseek/deepseek-chat-v3-0324:free">DeepSeek V3 (free) — рекомендуем</option>
+            <option value="deepseek/deepseek-r1-0528:free">DeepSeek R1 (free) — глубже рассуждает</option>
+            <option value="meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 70B (free)</option>
+            <option value="google/gemini-2.0-flash-exp:free">Gemini 2.0 Flash (free)</option>
+          </select>
+          <div style="display:flex;gap:0.5rem">
+            <button type="button" class="btn btn-primary" id="btn-engine-save" data-i18n="engineSave">Сохранить ключ</button>
+            <a href="https://openrouter.ai/keys" target="_blank" rel="noopener" class="btn" data-i18n="engineGetKey">Получить ключ →</a>
+          </div>
+        </div>
+        <p style="color:var(--muted);font-size:0.8125rem;margin-top:0.85rem" data-i18n="engineNote">
+          Ключ хранится только на этом компьютере. Бесплатные модели иногда отвечают чуть медленнее.
+        </p>
+      </div>
+      <div class="panel connect-hero">
+        <div class="ring-icon">💍</div>
+        <h2 style="font-size:1.25rem;margin-bottom:0.5rem;display:flex;align-items:center;justify-content:center;gap:0.35rem">
+          Oura Ring <button type="button" class="explain-btn" data-section-help="connect">?</button>
+        </h2>
+        <p style="color:var(--muted);font-size:0.875rem" data-i18n="ouraFree">Бесплатно через Oura API. Сон, готовность, активность.</p>
+        <p id="oura-status" style="margin:1rem 0"></p>
+        <button type="button" class="btn btn-primary" id="btn-oura" style="margin-top:0.5rem">Подключить Oura Ring</button>
+        <p style="color:var(--muted);font-size:0.8125rem;margin-top:1rem" data-i18n="ouraOnce">Один раз войти в Oura — дальше данные подтягиваются сами.</p>
+      </div>
+      <div class="panel">
+        <h3 data-i18n="appleHealth">Apple Health (Health Auto Export)</h3>
+        <p style="color:var(--muted);font-size:0.875rem;margin-bottom:1rem">
+          <span data-i18n="appleExport">Экспорт JSON в папку</span> <code id="hae-folder">health_auto_export</code> · iPhone → Mac
+        </p>
+        <p id="hae-status"></p>
+        <button type="button" class="btn" id="btn-sync-hae2" data-i18n="syncNow">Синхронизировать сейчас</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="explain-overlay hidden" id="explain-overlay">
+    <div class="explain-modal" role="dialog" aria-labelledby="explain-title">
+      <h4 id="explain-title"></h4>
+      <div id="explain-body"></div>
+      <button type="button" class="explain-close" id="explain-close">Понятно</button>
+    </div>
+  </div>
+
+  <script>
+    const SERVER_URL = "http://127.0.0.1:8787";
+    const API_BASE = location.protocol.startsWith("http") ? "" : SERVER_URL;
+    const ON_FILE = location.protocol === "file:";
+    let chartInstances = [];
+    let helpData = {};
+    let dashboardData = null;
+    let lang = localStorage.getItem("zh_lang") || "ru";
+    let engineEnabled = false;
+    let consiliumGenerating = false;
+    let symptomGenerating = false;
+
+    const I18N = {
+      ru: {
+        help: "? Помощь", refresh: "Обновить", syncApple: "↻ Apple Health",
+        hint: "📊 Здесь — факты и источники данных. 💬 Разбор анализов и рекомендации — в Claude «Здоровье».",
+        hintMore: "Подробнее", updated: "Обновлено", diagnoses: "диагнозов", labs: "анализов",
+        weeklyBrief: "На этой неделе", eveningCheckin: "Вечерний check-in",
+        checkinHint: "Откройте Claude «Здоровье» — вечером он сам спросит, как прошёл день.",
+        checkinBannerTitle: "💬 Вечерний check-in — откройте Claude",
+        checkinBannerEvening: "Claude спросит, как прошёл день и как вы спали. Просто ответьте своими словами — цифры ставить не нужно. Запись появится здесь.",
+        checkinBannerDay: "Заполните короткий опрос ниже (4 шага) или дождитесь вечера — Claude тоже спросит.",
+        checkinDone: "Сегодня записано ✓ Спасибо!",
+        checkinHowTitle: "Как это работает",
+        checkinStep1: "Откройте Claude Desktop → проект «Здоровье Замиры».",
+        checkinStep2: "После 18:00 Claude сам спросит о дне и сне (или напишите сами в любое время).",
+        checkinStep3: "Ответьте своими словами — Claude сохранит и точки обновятся здесь.",
+        checkinMetricsTitle: "Что записывается (Claude оценивает сам)",
+        checkinMoodScale: "Настроение 1–5: 1 = очень плохо · 3 = нормально · 5 = отлично",
+        checkinSleepScale: "Сон 1–5: 1 = почти не спала · 3 = так себе · 5 = выспалась",
+        checkinSymptoms: "Симптомы — если упомянете: головная боль, слабость, тошнота…",
+        checkinSayTitle: "Что можно сказать Claude",
+        checkinPhrase1: "«Как прошёл день?»",
+        checkinPhrase2: "«Устала сегодня, плохо спала»",
+        checkinPhrase3: "«Болит голова, настроение так себе»",
+        checkinLegend: "7 дней · смайл = настроение · наведите для подробностей",
+        visitPack: "Для врача", consilium: "Консилиум",
+        consiliumTitle: "Консилиум врачей",
+        consiliumClaude: "Полный разбор врачей",
+        consiliumQuick: "Черновик (авто)",
+        consiliumWait: "Открываю Claude «Здоровье» и пишу «готово» — разбор появится здесь через несколько секунд.",
+        consiliumThinking: "Врачи смотрят анализы… разбор появится здесь через 20–40 секунд.",
+        consiliumReady: "Разбор готов",
+        consiliumFromRules: "Быстрый консилиум (по правилам)",
+        consiliumSee: "Вижу", consiliumWarn: "Настораживает",
+        consiliumRec: "Рекомендации", consiliumWhy: "На основе чего",
+        consiliumTeaserToday: "Разбор врачей — вкладка «Консилиум» или кнопка в шапке.",
+        consiliumTeaserGo: "Открыть →",
+        consiliumIntro: "Нажмите «Полный разбор врачей» — дашборд сам соберёт мнение шести специалистов.",
+        consiliumEmpty: "Нажмите «Полный разбор врачей» — здесь появится консилиум уровня живых специалистов.",
+        consiliumNoEngine: "Подключите бесплатный движок во вкладке «Подключения» — тогда разбор делается автоматически. Без него: откройте Claude «Здоровье» и напишите «готово».",
+        consiliumError: "Не получилось сгенерировать. Проверьте ключ во вкладке «Подключения» или попробуйте ещё раз.",
+        engineTitle: "Движок разбора (автономно)",
+        engineDesc: "Бесплатный ключ OpenRouter — и дашборд сам делает полный разбор врачей и отвечает на вопросы. Без Claude Desktop.",
+        engineSave: "Сохранить ключ", engineGetKey: "Получить ключ →",
+        engineNote: "Ключ хранится только на этом компьютере. Бесплатные модели иногда отвечают чуть медленнее.",
+        engineSources: "Источники доказательств",
+        engineOn: "Движок подключён — дашборд работает сам ✓",
+        engineOff: "Движок не подключён — добавьте бесплатный ключ ниже.",
+        engineSaved: "Ключ сохранён ✓",
+        symptomAskTitle: "Спросите о симптоме",
+        symptomAskHint: "Коротко своими словами — ответ появится здесь и покажет, на чём основан.",
+        symptomAskPh: "Например: устала, болит плечо, плохо спала…",
+        symptomAskBtn: "Спросить",
+        symptomAskWait: "Открываю Claude «Здоровье» — ответ появится здесь через несколько секунд.",
+        symptomThinking: "Думаю над ответом… появится здесь через несколько секунд.",
+        symptomAskDone: "Ответ готов",
+        symptomSurvey: "Как вы себя чувствуете?",
+        surveyMoodQ: "Как настроение сегодня?", surveyMoodSub: "Нажмите один вариант",
+        surveySleepQ: "Как спали прошлой ночью?", surveySleepSub: "",
+        surveySymQ: "Есть ли что-то из этого?", surveySymSub: "Можно несколько или «Ничего»",
+        surveySymNone: "Ничего из этого",
+        surveyDoneQ: "Готово!", surveyDoneSub: "Записали. При желании добавьте слово:",
+        surveyNotePh: "Необязательно…",
+        surveyBack: "Назад", surveyNext: "Далее", surveySave: "Сохранить",
+        surveySaved: "Спасибо, записано ✓",
+        mood: "настроение", sleepQ: "сон",
+        tabToday: "Сегодня", tabConsilium: "Консилиум", tabCharts: "Графики", tabLabs: "Анализы", tabTasks: "Задачи", tabMeds: "Препараты", tabConnect: "Подключения",
+        today: "Сегодня", openTasks: "Открытые задачи", chartsLabs: "Анализы — динамика", wearables: "Носимые устройства",
+        labsTable: "Таблица анализов", tasks: "Задачи", meds: "Препараты",
+        thDate: "Дата", thTest: "Тест", thValue: "Значение", thFresh: "Свежесть", thTask: "Задача", thPriority: "Приоритет",
+        thCategory: "Категория", thMed: "Препарат", thDose: "Доза", thPurpose: "Назначение",
+        sleep: "Сон", pulse: "Пульс", steps: "Шаги", readiness: "Готовность", hrv: "ВСР",
+        noWearable: "Подключите Apple Health или Oura", noTasks: "Нет открытых задач",
+        noLabs: "Загрузите анализы через Claude", noChartData: "Нет данных", norm: "норма",
+        connectOura: "Подключить Oura Ring", reconnectOura: "Переподключить Oura",
+        ouraFree: "Бесплатно через Oura API. Сон, готовность, активность.",
+        ouraOnce: "Один раз войти в Oura — дальше данные подтягиваются сами.",
+        appleHealth: "Apple Health (Health Auto Export)", appleExport: "Экспорт JSON в папку", syncNow: "Синхронизировать сейчас",
+        ouraConnected: "Oura подключён", ouraNotConnected: "Oura не подключён",
+        haeSynced: "Последняя синхронизация:", haeNever: "Ещё не синхронизировали — положите JSON в папку",
+        ok: "Понятно",
+        lblWhy: "Зачем", lblDiagnosis: "Диагноз", lblMeds: "Препараты", lblTests: "Какие анализы",
+        lblNow: "Сейчас", lblLatest: "Последние значения", lblFrom: "Откуда", lblLatestOne: "Последнее",
+        lblValue: "Значение", lblFresh: "Свежесть", lblInterpret: "Интерпретация", lblFromData: "Откуда данные",
+        interpretLab: "Подробный разбор — спросите Claude: «Объясни",
+      },
+      en: {
+        help: "? Help", refresh: "Refresh", syncApple: "↻ Apple Health",
+        hint: "📊 Facts and data sources here. 💬 Analysis and recommendations — in Claude «Health».",
+        hintMore: "Learn more", updated: "Updated", diagnoses: "diagnoses", labs: "lab results",
+        weeklyBrief: "This week", eveningCheckin: "Evening check-in",
+        checkinHint: "Open Claude «Health» — in the evening he will ask how your day went.",
+        checkinBannerTitle: "💬 Evening check-in — open Claude",
+        checkinBannerEvening: "Claude will ask how your day went and how you slept. Reply in your own words — no numbers needed. It will appear here.",
+        checkinBannerDay: "No check-in logged today yet. Tell Claude «How was my day?» or wait until evening — he asks after 6 PM.",
+        checkinDone: "Today logged ✓ Thank you!",
+        checkinHowTitle: "How it works",
+        checkinStep1: "Open Claude Desktop → project «Zamira Health».",
+        checkinStep2: "After 6 PM Claude asks about your day and sleep (or you can write anytime).",
+        checkinStep3: "Reply in your own words — Claude saves it and dots update here.",
+        checkinMetricsTitle: "What gets logged (Claude scores for you)",
+        checkinMoodScale: "Mood 1–5: 1 = very bad · 3 = OK · 5 = great",
+        checkinSleepScale: "Sleep 1–5: 1 = barely slept · 3 = so-so · 5 = well rested",
+        checkinSymptoms: "Symptoms if you mention them: headache, fatigue, nausea…",
+        checkinSayTitle: "What you can tell Claude",
+        checkinPhrase1: "«How was my day?»",
+        checkinPhrase2: "«I'm tired today, slept badly»",
+        checkinPhrase3: "«Headache, mood is so-so»",
+        checkinLegend: "7 days · emoji = mood · hover for details",
+        visitPack: "For doctor", consilium: "Consilium",
+        consiliumTitle: "MDT consilium",
+        consiliumClaude: "Full doctor review",
+        consiliumQuick: "Auto draft",
+        consiliumWait: "Opening Claude «Health» and typing «ready» — results appear here in seconds.",
+        consiliumThinking: "Doctors are reviewing the labs… appears here in 20–40 seconds.",
+        consiliumReady: "Review ready",
+        consiliumNoEngine: "Connect the free engine in the «Connections» tab for automatic reviews. Without it: open Claude «Health» and type «ready».",
+        consiliumError: "Generation failed. Check the key in «Connections» or try again.",
+        engineTitle: "Review engine (autonomous)",
+        engineDesc: "A free OpenRouter key lets the dashboard generate the full doctor review and answer questions itself. No Claude Desktop.",
+        engineSave: "Save key", engineGetKey: "Get a key →",
+        engineNote: "The key is stored only on this computer. Free models can be a bit slower.",
+        engineSources: "Evidence sources",
+        engineOn: "Engine connected — dashboard runs on its own ✓",
+        engineOff: "Engine not connected — add a free key below.",
+        engineSaved: "Key saved ✓",
+        symptomThinking: "Thinking… answer appears here in seconds.",
+        consiliumFromRules: "Quick consilium (rules)",
+        consiliumSee: "See", consiliumWarn: "Concerns",
+        consiliumRec: "Recommendations", consiliumWhy: "Reasoning",
+        symptomSurvey: "How do you feel?",
+        surveyMoodQ: "How is your mood today?", surveyMoodSub: "Tap one option",
+        surveySleepQ: "How did you sleep?", surveySleepSub: "",
+        surveySymQ: "Any of these?", surveySymSub: "Pick several or «None»",
+        surveySymNone: "None of these",
+        surveyDoneQ: "Done!", surveyDoneSub: "Saved. Add a note if you like:",
+        surveyNotePh: "Optional…",
+        surveyBack: "Back", surveyNext: "Next", surveySave: "Save",
+        surveySaved: "Thank you, saved ✓",
+        consiliumTeaser: "Full consilium — «Consilium» tab or header button",
+        consiliumTeaserToday: "MDT review — open the «Consilium» tab or header button.",
+        consiliumTeaserGo: "Open →",
+        consiliumIntro: "Tap «Full doctor review» — the dashboard assembles all six specialists itself.",
+        consiliumEmpty: "Tap «Full doctor review» — a real-specialist-level MDT appears here.",
+        symptomAskTitle: "Ask about a symptom",
+        symptomAskHint: "Brief question — the answer appears here with evidence.",
+        symptomAskPh: "e.g. tired, shoulder pain, poor sleep…",
+        symptomAskBtn: "Ask",
+        symptomAskWait: "Opening Claude «Health» — answer appears here in seconds.",
+        symptomAskDone: "Answer ready",
+        mood: "mood", sleepQ: "sleep",
+        tabToday: "Today", tabConsilium: "Consilium", tabCharts: "Charts", tabLabs: "Labs", tabTasks: "Tasks", tabMeds: "Medications", tabConnect: "Connect",
+        today: "Today", openTasks: "Open tasks", chartsLabs: "Labs — trends", wearables: "Wearables",
+        labsTable: "Lab results", tasks: "Tasks", meds: "Medications",
+        thDate: "Date", thTest: "Test", thValue: "Value", thFresh: "Freshness", thTask: "Task", thPriority: "Priority",
+        thCategory: "Category", thMed: "Medication", thDose: "Dose", thPurpose: "Purpose",
+        sleep: "Sleep", pulse: "Resting HR", steps: "Steps", readiness: "Readiness", hrv: "HRV",
+        noWearable: "Connect Apple Health or Oura", noTasks: "No open tasks",
+        noLabs: "Upload labs via Claude", noChartData: "No data", norm: "ref",
+        connectOura: "Connect Oura Ring", reconnectOura: "Reconnect Oura",
+        ouraFree: "Free via Oura API. Sleep, readiness, activity.",
+        ouraOnce: "Sign in to Oura once — data syncs automatically.",
+        appleHealth: "Apple Health (Health Auto Export)", appleExport: "Export JSON to folder", syncNow: "Sync now",
+        ouraConnected: "Oura connected", ouraNotConnected: "Oura not connected",
+        haeSynced: "Last sync:", haeNever: "Not synced yet — drop JSON in folder",
+        ok: "Got it",
+        lblWhy: "Why", lblDiagnosis: "Diagnosis", lblMeds: "Medications", lblTests: "Which labs",
+        lblNow: "Status now", lblLatest: "Latest values", lblFrom: "Source", lblLatestOne: "Latest",
+        lblValue: "Value", lblFresh: "Freshness", lblInterpret: "Interpretation", lblFromData: "Data source",
+        interpretLab: "Full review — ask Claude: «Explain",
+      },
+    };
+
+    function t(key) { return I18N[lang]?.[key] || I18N.ru[key] || key; }
+    function pick(obj, base) {
+      if (!obj) return "";
+      return obj[base + "_" + lang] || obj[base + "_ru"] || obj[base] || "";
+    }
+
+    function trPriority(p) {
+      const m = { urgent: { ru: "срочно", en: "urgent" }, important: { ru: "важно", en: "important" }, planned: { ru: "планово", en: "planned" }, routine: { ru: "планово", en: "routine" } };
+      return m[p]?.[lang] || p;
+    }
+    function trCategory(c) {
+      const m = { imaging: { ru: "обследование", en: "imaging" }, lab: { ru: "анализы", en: "labs" }, visit: { ru: "визит", en: "visit" } };
+      return m[c]?.[lang] || c || "—";
+    }
+    function trPurpose(p) {
+      if (!p) return "—";
+      const m = {
+        prolactinoma: { ru: "пролактинома", en: "prolactinoma" },
+        hypothyroidism: { ru: "гипотиреоз", en: "hypothyroidism" },
+        "HRT / menopause": { ru: "ЗГТ / менопауза", en: "HRT / menopause" },
+        menopause: { ru: "менопауза", en: "menopause" },
+      };
+      return m[p]?.[lang] || p;
+    }
+    function trDose(d) {
+      if (d === "per endocrinologist schedule") return lang === "en" ? d : "по схеме эндокринолога";
+      return d || "—";
+    }
+
+    function iconSrc(icon) {
+      if (!icon || !icon.includes("/")) return icon;
+      if (icon.startsWith("/")) return icon;
+      return "/" + icon;
+    }
+
+    function applyStaticI18n() {
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const k = el.dataset.i18n;
+        if (I18N[lang][k]) el.textContent = t(k);
+      });
+      document.getElementById("btn-help-dashboard").textContent = t("help");
+      document.getElementById("btn-refresh").textContent = t("refresh");
+      document.getElementById("btn-sync-hae").textContent = t("syncApple");
+      document.getElementById("btn-visit-pack").textContent = t("visitPack");
+      document.getElementById("btn-consilium").textContent = t("consilium");
+      const cc = document.getElementById("btn-claude-consilium");
+      const cq = document.getElementById("btn-quick-consilium");
+      if (cc) cc.textContent = t("consiliumClaude");
+      if (cq) cq.textContent = t("consiliumQuick");
+      const symIn = document.getElementById("symptom-input");
+      if (symIn && I18N[lang].symptomAskPh) symIn.placeholder = t("symptomAskPh");
+      const symBtn = document.getElementById("btn-symptom-ask");
+      if (symBtn) symBtn.textContent = t("symptomAskBtn");
+      document.getElementById("link-claude-help").textContent = t("hintMore");
+      document.getElementById("explain-close").textContent = t("ok");
+      document.getElementById("lang-ru").classList.toggle("active", lang === "ru");
+      document.getElementById("lang-en").classList.toggle("active", lang === "en");
+    }
+
+    function setLang(next) {
+      lang = next;
+      localStorage.setItem("zh_lang", lang);
+      applyStaticI18n();
+      if (dashboardData) {
+        render(dashboardData);
+        resetSurvey();
+      }
+    }
+
+    function esc(s) {
+      return String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function explainBtn(attrs, label) {
+      return `<button type="button" class="explain-btn" aria-label="Объяснение" ${attrs || ""}>?</button>`;
+    }
+
+    function showExplain(title, sections) {
+      document.getElementById("explain-title").textContent = title;
+      document.getElementById("explain-body").innerHTML = sections.map(s => {
+        let html = s.label ? `<div class="explain-label">${esc(s.label)}</div>` : "";
+        if (s.list?.length) {
+          html += `<ul>${s.list.map(i => `<li>${esc(i)}</li>`).join("")}</ul>`;
+        }
+        if (s.text) html += `<p>${esc(s.text)}</p>`;
+        if (s.source) html += `<div class="explain-source">${esc(s.source)}</div>`;
+        return html;
+      }).join("");
+      document.getElementById("explain-overlay").classList.remove("hidden");
+    }
+
+    function iconSrc(icon) {
+      if (!icon || !icon.includes("/")) return icon;
+      if (icon.startsWith("http") || icon.startsWith("/")) return icon;
+      return "/" + icon;
+    }
+
+    function systemTitle(s) {
+      return lang === "en" && s.title_en ? s.title_en : s.title;
+    }
+
+    function showSectionHelp(key) {
+      const h = helpData[key];
+      const title = h ? pick(h, "title") : "";
+      const body = h ? pick(h, "body") : "";
+      if (!title && !body) {
+        showExplain(t("help"), [{
+          text: lang === "en"
+            ? "Help data not loaded. Click Refresh, or quit and reopen start_zamira.command (server restart)."
+            : "Данные подсказок не загружены. Нажмите «Обновить» или перезапустите start_zamira.command.",
+        }]);
+        return;
+      }
+      showExplain(title, [
+        { text: body },
+        { label: t("lblFromData"), source: pick(h, "source") },
+      ]);
+    }
+
+    function showSystemExplain(s) {
+      const e = s.explain || {};
+      if (!e.purpose_ru && !e.purpose_en) {
+        showExplain(systemTitle(s), [{ text: lang === "en" ? "Restart start_zamira.command, then click Refresh." : "Перезапустите start_zamira.command, затем нажмите «Обновить»." }]);
+        return;
+      }
+      const sections = [
+        { label: t("lblWhy"), text: pick(e, "purpose") },
+        { label: t("lblDiagnosis"), text: pick(e, "diagnosis") },
+      ];
+      const meds = lang === "en" ? (e.meds_en || e.meds_ru || []) : (e.meds_ru || []);
+      if (meds.length) sections.push({ label: t("lblMeds"), list: meds });
+      if (e.tests_ru?.length) sections.push({ label: t("lblTests"), list: e.tests_ru });
+      sections.push({ label: t("lblNow"), text: pick(e, "status") });
+      if (e.sources?.length) {
+        sections.push({
+          label: t("lblLatest"),
+          list: e.sources.map(x => `${x.test}: ${x.value ?? "—"} ${x.unit || ""} (${x.date}) ← ${x.file}`),
+        });
+      }
+      sections.push({ label: t("lblFrom"), source: pick(e, "data_from") });
+      showExplain(systemTitle(s), sections);
+    }
+
+    function showChartExplain(c) {
+      const e = c.explain || {};
+      showExplain(c.title, [
+        { label: t("lblWhy"), text: pick(e, "purpose") },
+        { label: t("lblLatestOne"), text: pick(e, "latest") || e.latest_ru },
+        { label: t("lblFrom"), source: pick(e, "source") || e.source_ru },
+      ]);
+    }
+
+    function showLabExplain(l) {
+      const name = l.test_name_ru || l.test_code;
+      showExplain(name, [
+        { label: t("lblValue"), text: `${l.value != null ? l.value : (l.value_text || "—")} ${l.unit || ""} · ${l.sample_date}` },
+        { label: t("lblFresh"), text: l.freshness?.message_ru || "—" },
+        { label: t("lblFrom"), source: `lab_results ← ${l.source_file || "Claude"} · health.db` },
+        { label: t("lblInterpret"), text: t("interpretLab") + " " + name + "»" },
+      ]);
+    }
+
+    function systemIcon(s) {
+      if (s.icon && s.icon.includes("/")) {
+        const src = iconSrc(s.icon);
+        const fb = s.icon.includes("thyroid") ? "🦋" : s.icon.includes("menopause") ? "🌸" : s.icon.includes("nutrition") ? "☀️" : "•";
+        return `<img class="icon-img" src="${src}" alt="" onerror="this.outerHTML='<span class=\\'icon\\'>${fb}</span>'" />`;
+      }
+      return `<span class="icon">${s.icon || "•"}</span>`;
+    }
+
+    function bindExplainClicks() {
+      document.addEventListener("click", (ev) => {
+        const btn = ev.target.closest(".explain-btn");
+        if (!btn) return;
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (btn.id === "btn-help-dashboard") return showSectionHelp("dashboard");
+        if (btn.dataset.sectionHelp) return showSectionHelp(btn.dataset.sectionHelp);
+        if (btn.dataset.systemIdx != null && window._systemsData) {
+          return showSystemExplain(window._systemsData[+btn.dataset.systemIdx]);
+        }
+        if (btn.dataset.chart && window._chartExplain) {
+          return showChartExplain(window._chartExplain[btn.dataset.chart]);
+        }
+        if (btn.dataset.labIdx != null && dashboardData?.lab_results) {
+          return showLabExplain(dashboardData.lab_results[+btn.dataset.labIdx]);
+        }
+        if (btn.dataset.todayKey && dashboardData?.today_help) {
+          const h = dashboardData.today_help[btn.dataset.todayKey];
+          if (h) showExplain(h.title || t(btn.dataset.todayKey), [{ text: pick(h, "body") || h.body_ru }, { label: t("lblFromData"), source: pick(h, "source") || h.source_ru }]);
+        }
+      }, true);
+    }
+
+    function bindExplainOverlay() {
+      const overlay = document.getElementById("explain-overlay");
+      document.getElementById("explain-close").onclick = () => overlay.classList.add("hidden");
+      overlay.onclick = (ev) => { if (ev.target === overlay) overlay.classList.add("hidden"); };
+      document.getElementById("link-claude-help").onclick = () => showSectionHelp("claude_analysis");
+      document.getElementById("lang-ru").onclick = () => setLang("ru");
+      document.getElementById("lang-en").onclick = () => setLang("en");
+      bindExplainClicks();
+    }
+
+    async function serverOnline() {
+      try {
+        const r = await fetch(SERVER_URL + "/health", { method: "GET" });
+        return r.ok;
+      } catch (_) {
+        return false;
+      }
+    }
+
+    async function ensureServerMode() {
+      if (!ON_FILE) return true;
+      if (await serverOnline()) {
+        location.replace(SERVER_URL + "/dashboard");
+        return false;
+      }
+      document.getElementById("server-banner").classList.remove("hidden");
+      return false;
+    }
+
+    function activateTab(tabId) {
+      document.querySelectorAll("#tabs button").forEach(b => {
+        b.classList.toggle("active", b.dataset.tab === tabId);
+      });
+      ["today", "consilium", "charts", "labs", "tasks", "meds", "connect"].forEach(id => {
+        document.getElementById("tab-" + id).classList.toggle("hidden", id !== tabId);
+      });
+      if (tabId === "charts") setTimeout(renderCharts, 50);
+    }
+
+    document.querySelectorAll("#tabs button").forEach(btn => {
+      btn.addEventListener("click", () => activateTab(btn.dataset.tab));
+    });
+
+    async function loadData() {
+      if (!ON_FILE) {
+        try {
+          const r = await fetch(API_BASE + "/api/snapshot", { cache: "no-store" });
+          if (r.ok) return await r.json();
+        } catch (_) { /* fallback to embedded */ }
+      }
+      const el = document.getElementById("dashboard-data");
+      if (el && el.textContent.trim()) return JSON.parse(el.textContent);
+      throw new Error("no data");
+    }
+
+    async function apiPost(path, opts) {
+      if (ON_FILE && !(await serverOnline())) {
+        document.getElementById("server-banner").classList.remove("hidden");
+        alert(lang === "en" ? "Start Zamira Health app first." : "Сначала запустите Zamira Health.");
+        return null;
+      }
+      try {
+        const r = await fetch(API_BASE + path, opts || { method: "POST" });
+        if (!r.ok) {
+          const msg = r.status === 404
+            ? (lang === "en" ? "Server not found" : "Сервер не найден")
+            : (lang === "en" ? "Server error (" : "Ошибка сервера (") + r.status + ")";
+          alert(msg);
+          return null;
+        }
+        return await r.json();
+      } catch (e) {
+        document.getElementById("server-banner").classList.remove("hidden");
+        alert(lang === "en" ? "Cannot reach server." : "Не удалось связаться с сервером.");
+        return null;
+      }
+    }
+
+    function statusDot(s) {
+      const m = { good: "dot-good", caution: "dot-caution", warn: "dot-warn", unknown: "dot-unknown" };
+      return m[s] || "dot-unknown";
+    }
+
+    function renderSystems(systems) {
+      window._systemsData = systems || [];
+      document.getElementById("systems-row").innerHTML = window._systemsData.map((s, i) => `
+        <div class="sys-card">
+          <div class="sys-card-head">
+            ${systemIcon(s)}
+            ${explainBtn(`data-system-idx="${i}"`)}
+          </div>
+          <div class="title"><span class="dot ${statusDot(s.status)}"></span>${systemTitle(s)}</div>
+        </div>`).join("");
+    }
+
+    function renderWeeklyBrief(brief) {
+      if (!brief) return;
+      document.getElementById("brief-headline").textContent = lang === "en" ? (brief.headline_en || brief.headline_ru) : brief.headline_ru;
+      const list = document.getElementById("brief-list");
+      const items = brief.items || [];
+      list.innerHTML = items.length
+        ? items.map(i => {
+            const dot = i.priority === "urgent" || i.priority === "warn" ? "brief-urgent" : "brief-caution";
+            const text = lang === "en" ? (i.text_en || i.text_ru) : i.text_ru;
+            return `<li><span class="brief-dot ${dot}"></span><span>${esc(text)}</span></li>`;
+          }).join("")
+        : `<li><span class="brief-dot brief-caution"></span><span>${lang === "en" ? "No urgent items" : "Нет срочных пунктов"}</span></li>`;
+    }
+
+    function moodEmoji(n) {
+      if (n == null) return "·";
+      if (n >= 4) return "😊";
+      if (n >= 3) return "😐";
+      return "😔";
+    }
+
+    function isEveningLocal() {
+      return new Date().getHours() >= 18;
+    }
+
+    function renderCheckinGuide() {
+      const el = document.getElementById("checkin-guide");
+      if (!el) return;
+      el.innerHTML = `
+        <h4>${t("checkinHowTitle")}</h4>
+        <p class="checkin-hint">${lang === "en" ? "Use the survey above or Claude in the evening." : "Используйте опросник выше или Claude вечером."}</p>`;
+    }
+
+    const surveyState = { step: 0, mood: 0, sleep: "", symptoms: [], notes: "" };
+    const MOOD_EMOJI = ["😔", "😕", "😐", "🙂", "😊"];
+
+    function resetSurvey() {
+      surveyState.step = 0;
+      surveyState.mood = 0;
+      surveyState.sleep = "";
+      surveyState.symptoms = [];
+      surveyState.notes = "";
+    }
+
+    function renderSurvey(config, checkins) {
+      const body = document.getElementById("survey-body");
+      if (!config) return;
+      if (checkins?.has_today) {
+        body.innerHTML = `<div class="survey-done">${t("surveySaved")}</div>`;
+        return;
+      }
+      const chips = lang === "en" ? config.symptom_chips_en : config.symptom_chips_ru;
+      const sleepOpts = lang === "en" ? config.sleep_options_en : config.sleep_options_ru;
+      const moodLabels = lang === "en" ? config.mood_labels_en : config.mood_labels_ru;
+      const dots = [0, 1, 2, 3].map(i => {
+        let cls = "survey-dot";
+        if (i === surveyState.step) cls += " active";
+        else if (i < surveyState.step) cls += " done";
+        return `<span class="${cls}"></span>`;
+      }).join("");
+
+      let inner = `<div class="survey-progress">${dots}</div>`;
+      if (surveyState.step === 0) {
+        inner += `<p class="survey-q">${t("surveyMoodQ")}</p><p class="survey-sub">${t("surveyMoodSub")}</p>`;
+        inner += `<div class="survey-mood">${MOOD_EMOJI.map((em, i) =>
+          `<button type="button" class="survey-opt${surveyState.mood === i + 1 ? " selected" : ""}" data-mood="${i + 1}">${em}<span class="lbl">${moodLabels[i]}</span></button>`
+        ).join("")}</div>`;
+      } else if (surveyState.step === 1) {
+        inner += `<p class="survey-q">${t("surveySleepQ")}</p>`;
+        inner += `<div class="survey-sleep">${sleepOpts.map(o =>
+          `<button type="button" class="survey-opt${surveyState.sleep === o.id ? " selected" : ""}" data-sleep="${o.id}">${o.emoji}<span class="lbl">${o.label}</span></button>`
+        ).join("")}</div>`;
+      } else if (surveyState.step === 2) {
+        inner += `<p class="survey-q">${t("surveySymQ")}</p><p class="survey-sub">${t("surveySymSub")}</p>`;
+        inner += `<div class="survey-chips">`;
+        inner += `<button type="button" class="survey-chip none${!surveyState.symptoms.length ? " selected" : ""}" data-sym-none="1">${t("surveySymNone")}</button>`;
+        inner += chips.map(c =>
+          `<button type="button" class="survey-chip${surveyState.symptoms.includes(c.id) ? " selected" : ""}" data-sym="${c.id}">${esc(c.label)}</button>`
+        ).join("");
+        inner += `</div>`;
+      } else {
+        inner += `<p class="survey-q">${t("surveyDoneQ")}</p><p class="survey-sub">${t("surveyDoneSub")}</p>`;
+        inner += `<textarea class="survey-note" id="survey-note" placeholder="${t("surveyNotePh")}">${esc(surveyState.notes)}</textarea>`;
+      }
+
+      const canNext = surveyState.step === 0 ? surveyState.mood > 0
+        : surveyState.step === 1 ? !!surveyState.sleep
+        : surveyState.step === 2 ? true : true;
+      inner += `<div class="survey-actions">`;
+      if (surveyState.step > 0) inner += `<button type="button" class="btn" id="survey-back">${t("surveyBack")}</button>`;
+      if (surveyState.step < 3) inner += `<button type="button" class="btn btn-primary" id="survey-next"${canNext ? "" : " disabled"}>${t("surveyNext")}</button>`;
+      else inner += `<button type="button" class="btn btn-primary" id="survey-save">${t("surveySave")}</button>`;
+      inner += `</div>`;
+
+      body.innerHTML = inner;
+      body.querySelectorAll("[data-mood]").forEach(btn => btn.onclick = () => {
+        surveyState.mood = +btn.dataset.mood;
+        renderSurvey(config, checkins);
+      });
+      body.querySelectorAll("[data-sleep]").forEach(btn => btn.onclick = () => {
+        surveyState.sleep = btn.dataset.sleep;
+        renderSurvey(config, checkins);
+      });
+      body.querySelectorAll("[data-sym]").forEach(btn => btn.onclick = () => {
+        const id = btn.dataset.sym;
+        if (surveyState.symptoms.includes(id)) surveyState.symptoms = surveyState.symptoms.filter(x => x !== id);
+        else surveyState.symptoms.push(id);
+        renderSurvey(config, checkins);
+      });
+      const noneBtn = body.querySelector("[data-sym-none]");
+      if (noneBtn) noneBtn.onclick = () => { surveyState.symptoms = []; renderSurvey(config, checkins); };
+      const back = body.querySelector("#survey-back");
+      if (back) back.onclick = () => { surveyState.step--; renderSurvey(config, checkins); };
+      const next = body.querySelector("#survey-next");
+      if (next) next.onclick = () => { if (canNext) { surveyState.step++; renderSurvey(config, checkins); } };
+      const save = body.querySelector("#survey-save");
+      if (save) save.onclick = () => submitSurvey(config);
+    }
+
+    async function submitSurvey(config) {
+      const noteEl = document.getElementById("survey-note");
+      surveyState.notes = noteEl ? noteEl.value.trim() : "";
+      const r = await apiPost("/api/symptom-survey", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mood: surveyState.mood || 3,
+          sleep: surveyState.sleep || "ok",
+          symptoms: surveyState.symptoms,
+          notes: surveyState.notes,
+        }),
+      });
+      if (r?.ok) {
+        resetSurvey();
+        await reloadDashboard();
+      }
+    }
+
+    function renderCheckinBanner(checkins) {
+      const banner = document.getElementById("checkin-banner");
+      if (checkins?.has_today) {
+        banner.classList.add("hidden");
+        return;
+      }
+      banner.classList.remove("hidden");
+      document.getElementById("checkin-banner-title").textContent = t("checkinBannerTitle");
+      document.getElementById("checkin-banner-body").textContent = isEveningLocal()
+        ? t("checkinBannerEvening")
+        : t("checkinBannerDay");
+    }
+
+    function renderCheckins(checkins, surveyConfig) {
+      const row = document.getElementById("checkin-row");
+      const hint = document.getElementById("checkin-hint");
+      const statusOk = document.getElementById("checkin-status-ok");
+      renderCheckinBanner(checkins);
+      renderCheckinGuide();
+      renderSurvey(surveyConfig || dashboardData?.symptom_survey, checkins);
+      hint.textContent = t("checkinLegend") || t("checkinHint");
+      const recent = checkins?.recent || [];
+      if (checkins?.has_today) {
+        statusOk.textContent = t("checkinDone");
+        statusOk.classList.remove("hidden");
+      } else {
+        statusOk.classList.add("hidden");
+      }
+      if (!recent.length) {
+        row.innerHTML = "";
+        return;
+      }
+      row.innerHTML = recent.map(c => {
+        const d = c.date.slice(5).replace("-", "/");
+        const m = c.mood != null ? moodEmoji(c.mood) : "·";
+        const sleep = c.sleep_quality != null ? ` · ${t("sleepQ")} ${c.sleep_quality}/5` : "";
+        const sym = (c.symptoms || []).length ? ` · ${c.symptoms.join(", ")}` : "";
+        const tip = `${t("mood")} ${c.mood ?? "—"}/5${sleep}${sym}${c.notes ? " · " + c.notes : ""}`;
+        return `<div class="checkin-day" title="${esc(tip)}"><span class="score">${m}</span>${d}</div>`;
+      }).join("");
+    }
+
+    function renderToday(data) {
+      const m = data.today?.metrics || {};
+      const th = data.today_help || {};
+      const defs = [
+        ["sleep_hours", "sleep", "ч"], ["resting_hr", "pulse", "уд/мин"],
+        ["steps", "steps", ""], ["readiness_score", "readiness", ""],
+        ["hrv_sdnn", "hrv", "ms"]
+      ];
+      const html = defs.map(([k, labelKey, u]) => {
+        const row = m[k];
+        const v = row ? (row.value != null ? row.value.toFixed(row.value % 1 ? 1 : 0) : "—") : "—";
+        return `<div class="today-item">
+          <div class="metric-label">${t(labelKey)}${explainBtn(`data-today-key="${k}"`)}</div>
+          <div class="metric-big">${v}<span style="font-size:0.875rem;color:var(--muted)">${u}</span></div>
+        </div>`;
+      }).join("");
+      document.getElementById("today-strip").innerHTML = html || `<p style='color:var(--muted)'>${t("noWearable")}</p>`;
+
+      const tasks = data.tasks_open?.slice(0, 3) || [];
+      document.getElementById("today-tasks-preview").innerHTML = tasks.length
+        ? tasks.map(tk => `<div style="padding:0.5rem 0;border-bottom:1px solid var(--border)">${tk.title_ru} <span class="priority-${tk.priority}">· ${trPriority(tk.priority)}</span></div>`).join("")
+        : `<p style='color:var(--muted)'>${t("noTasks")}</p>`;
+    }
+
+    function destroyCharts() {
+      chartInstances.forEach(c => c.destroy());
+      chartInstances = [];
+    }
+
+    function makeChart(canvas, spec, isLab) {
+      const ctx = canvas.getContext("2d");
+      const color = spec.color || "#2dd4bf";
+      const datasets = [{
+        data: spec.values,
+        borderColor: color,
+        backgroundColor: color + "33",
+        fill: true,
+        tension: 0.35,
+        pointRadius: 4,
+        pointBackgroundColor: color,
+      }];
+      if (isLab && spec.ref_low != null && spec.ref_high != null) {
+        datasets.push({
+          label: "norm low",
+          data: spec.values.map(() => spec.ref_low),
+          borderColor: "rgba(52,211,153,0.35)",
+          borderDash: [6, 4],
+          pointRadius: 0,
+          fill: false,
+        });
+        datasets.push({
+          label: "norm high",
+          data: spec.values.map(() => spec.ref_high),
+          borderColor: "rgba(248,113,113,0.35)",
+          borderDash: [6, 4],
+          pointRadius: 0,
+          fill: false,
+        });
+      }
+      const chart = new Chart(ctx, {
+        type: "line",
+        data: { labels: spec.labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: "#64748b", maxTicksLimit: 5 }, grid: { color: "rgba(255,255,255,0.05)" } },
+            y: { ticks: { color: "#64748b" }, grid: { color: "rgba(255,255,255,0.05)" } },
+          },
+        },
+      });
+      chartInstances.push(chart);
+    }
+
+    function renderChartGrid(containerId, charts, isLab) {
+      const el = document.getElementById(containerId);
+      window._chartExplain = window._chartExplain || {};
+      if (!charts?.length) {
+        el.innerHTML = `<div class="panel"><p style="color:var(--muted)">${t("noChartData")}</p></div>`;
+        return;
+      }
+      el.innerHTML = charts.map((c, i) => {
+        const key = `${containerId}-${i}`;
+        window._chartExplain[key] = c;
+        const flag = c.latest_flag === "low" ? "flag-low" : c.latest_flag === "high" ? "flag-high" : "";
+        const ref = isLab && c.ref_low != null ? `<span style="font-size:0.7rem;color:var(--muted)"> ${t("norm")} ${c.ref_low}–${c.ref_high}</span>` : "";
+        return `<div class="panel chart-card">
+          <div class="chart-head">
+            <div><span style="color:var(--muted);font-size:0.8125rem">${c.title}</span>${explainBtn(`data-chart="${key}"`)}${ref}</div>
+            <div><span class="val ${flag}">${c.latest ?? "—"}</span><span class="unit">${c.unit || ""}</span></div>
+          </div>
+          <canvas id="chart-${key}" height="140"></canvas>
+        </div>`;
+      }).join("");
+      charts.forEach((c, i) => {
+        const canvas = document.getElementById(`chart-${containerId}-${i}`);
+        if (canvas && typeof Chart !== "undefined") makeChart(canvas, c, isLab);
+      });
+    }
+
+    function renderCharts() {
+      if (!window._chartData) return;
+      destroyCharts();
+      renderChartGrid("lab-charts", window._chartData.lab_charts, true);
+      renderChartGrid("wearable-charts", window._chartData.wearable_charts, false);
+    }
+
+    function renderIntegrations(int) {
+      const oura = int?.oura_connected
+        ? `<span class="status-pill"><span class="dot dot-good"></span> ${t("ouraConnected")}</span>`
+        : `<span class="status-pill"><span class="dot dot-unknown"></span> ${t("ouraNotConnected")}</span>`;
+      document.getElementById("oura-status").innerHTML = oura;
+      document.getElementById("btn-oura").textContent = int?.oura_connected ? t("reconnectOura") : t("connectOura");
+      if (int?.health_auto_export_folder) document.getElementById("hae-folder").textContent = int.health_auto_export_folder;
+      const hae = int?.health_auto_export_last_sync
+        ? `${t("haeSynced")} ${int.health_auto_export_last_sync.replace("T", " ").slice(0, 16)}`
+        : t("haeNever");
+      document.getElementById("hae-status").innerHTML = `<span class="status-pill">${hae}</span>`;
+    }
+
+    let consiliumPollTimer = null;
+
+    function renderConsiliumPanel(status, preview, consiliumHtml) {
+      const stEl = document.getElementById("consilium-status");
+      const body = document.getElementById("consilium-body");
+      if (!stEl || !body) return;
+
+      const cs = status || {};
+      if (consiliumGenerating) {
+        stEl.innerHTML = `<div class="consilium-wait">${t("consiliumThinking")}</div>`;
+        return;
+      }
+      if (cs.claude_pending) {
+        stEl.innerHTML = `<div class="consilium-wait">${engineEnabled ? t("consiliumThinking") : t("consiliumWait")}</div>`;
+        startConsiliumPoll();
+      } else {
+        stopConsiliumPoll();
+        stEl.innerHTML = cs.has_claude_report
+          ? `<p class="checkin-status-ok">${t("consiliumReady")} · ${esc((cs.claude_generated_at || "").replace("T", " ").slice(0, 16))}</p>`
+          : "";
+      }
+
+      if (consiliumHtml && consiliumHtml.trim()) {
+        body.innerHTML = consiliumHtml;
+        return;
+      }
+
+      const report = cs.claude_report || null;
+      if (cs.claude_pending) {
+        body.innerHTML = `<p class="checkin-hint">${t("consiliumWait")}</p>`;
+        return;
+      }
+
+      body.innerHTML = `
+        <div class="consilium-wait" style="margin-bottom:0.75rem">${engineEnabled ? t("consiliumEmpty") : t("consiliumNoEngine")}</div>
+        <p class="checkin-hint muted">${lang === "en" ? "Auto draft opens in new tab via «Auto draft» — not a substitute for full review." : "«Черновик (авто)» — только checklist, не замена полному разбору."}</p>`;
+    }
+
+    const SYMPTOM_QUICK = ["устала", "болит голова", "плохо спала", "болит плечо", "тошнота"];
+    let symptomPollTimer = null;
+
+    function stopSymptomPoll() {
+      if (symptomPollTimer) { clearInterval(symptomPollTimer); symptomPollTimer = null; }
+    }
+
+    function startSymptomPoll() {
+      if (symptomPollTimer) return;
+      symptomPollTimer = setInterval(async () => {
+        try {
+          const r = await fetch(API_BASE + "/api/symptom-question/status", { cache: "no-store" });
+          if (!r.ok) return;
+          const st = await r.json();
+          if (!st.pending && st.has_answer) {
+            stopSymptomPoll();
+            await reloadDashboard();
+          }
+        } catch (_) {}
+      }, 3000);
+    }
+
+    function renderSymptomAsk(symQa, answerHtml) {
+      const chips = document.getElementById("symptom-chips");
+      const input = document.getElementById("symptom-input");
+      const stEl = document.getElementById("symptom-ask-status");
+      const ansEl = document.getElementById("symptom-answer-body");
+      if (!chips || !input) return;
+
+      chips.innerHTML = SYMPTOM_QUICK.map(s =>
+        `<button type="button" class="symptom-chip" data-sym-quick="${esc(s)}">${esc(s)}</button>`
+      ).join("");
+      chips.querySelectorAll("[data-sym-quick]").forEach(btn => {
+        btn.onclick = () => {
+          const cur = input.value.trim();
+          input.value = cur ? cur + ", " + btn.dataset.symQuick : btn.dataset.symQuick;
+          input.focus();
+        };
+      });
+
+      if (!stEl || !ansEl) return;
+      const qa = symQa || {};
+      if (symptomGenerating) {
+        stEl.innerHTML = `<div class="sym-wait">${t("symptomThinking")}</div>`;
+        ansEl.innerHTML = answerHtml || "";
+        return;
+      }
+      if (qa.pending) {
+        stEl.innerHTML = `<div class="sym-wait">${engineEnabled ? t("symptomThinking") : t("symptomAskWait")}</div>`;
+        startSymptomPoll();
+      } else {
+        stopSymptomPoll();
+        stEl.innerHTML = qa.has_answer
+          ? `<p class="checkin-status-ok">${t("symptomAskDone")}</p>` : "";
+      }
+      ansEl.innerHTML = answerHtml || "";
+    }
+
+    async function submitSymptomQuestion() {
+      const input = document.getElementById("symptom-input");
+      const q = (input?.value || "").trim();
+      if (q.length < 2) {
+        alert(lang === "en" ? "Write a short question." : "Напишите короткий вопрос.");
+        return;
+      }
+      activateTab("today");
+      document.getElementById("symptom-ask-panel")?.scrollIntoView({ behavior: "smooth" });
+
+      if (engineEnabled) {
+        symptomGenerating = true;
+        const stEl = document.getElementById("symptom-ask-status");
+        if (stEl) stEl.innerHTML = `<div class="sym-wait">${t("symptomThinking")}</div>`;
+        try {
+          const resp = await fetch(API_BASE + "/api/symptom-question", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ question: q }),
+          });
+          await resp.json().catch(() => ({}));
+        } catch (_) { /* fall through to reload */ }
+        symptomGenerating = false;
+        const input2 = document.getElementById("symptom-input");
+        if (input2) input2.value = "";
+        await reloadDashboard();
+        return;
+      }
+
+      const r = await apiPost("/api/symptom-question", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: q }),
+      });
+      if (r?.ok) await reloadDashboard();
+    }
+
+    function stopConsiliumPoll() {
+      if (consiliumPollTimer) {
+        clearInterval(consiliumPollTimer);
+        consiliumPollTimer = null;
+      }
+    }
+
+    function startConsiliumPoll() {
+      if (consiliumPollTimer) return;
+      consiliumPollTimer = setInterval(async () => {
+        try {
+          const r = await fetch(API_BASE + "/api/consilium/status", { cache: "no-store" });
+          if (!r.ok) return;
+          const cs = await r.json();
+          if (!cs.claude_pending && cs.has_claude_report) {
+            stopConsiliumPoll();
+            await reloadDashboard();
+          }
+        } catch (_) { /* retry */ }
+      }, 3000);
+    }
+
+    async function requestClaudeConsilium() {
+      document.getElementById("consilium-panel")?.scrollIntoView({ behavior: "smooth" });
+
+      if (engineEnabled) {
+        // Autonomous: backend generates the consilium directly.
+        consiliumGenerating = true;
+        const stEl = document.getElementById("consilium-status");
+        const body = document.getElementById("consilium-body");
+        if (stEl) stEl.innerHTML = `<div class="consilium-wait">${t("consiliumThinking")}</div>`;
+        if (body) body.innerHTML = `<p class="checkin-hint">${t("consiliumThinking")}</p>`;
+        try {
+          const r = await fetch(API_BASE + "/api/consilium/generate", { method: "POST", cache: "no-store" });
+          const data = await r.json().catch(() => ({}));
+          consiliumGenerating = false;
+          if (r.ok && data.ok) {
+            await reloadDashboard();
+          } else {
+            if (stEl) stEl.innerHTML = `<div class="consilium-wait">${t("consiliumError")}</div>`;
+          }
+        } catch (_) {
+          consiliumGenerating = false;
+          if (stEl) stEl.innerHTML = `<div class="consilium-wait">${t("consiliumError")}</div>`;
+        }
+        return;
+      }
+
+      // Fallback: no engine — use the Claude Desktop / MCP pending flow.
+      const r = await apiPost("/api/consilium/request-claude");
+      if (r?.ok) await reloadDashboard();
+    }
+
+    function render(data) {
+      dashboardData = data;
+      window._chartData = data.charts;
+      helpData = data.help || {};
+      applyStaticI18n();
+      const p = data.profile;
+      document.getElementById("patient-name").textContent = p.display_name;
+      document.getElementById("patient-meta").textContent = `${p.diagnoses?.length || 0} ${t("diagnoses")} · ${data.lab_results?.length || 0} ${t("labs")}`;
+      if (data.generated_at) document.getElementById("updated-at").textContent = t("updated") + " " + data.generated_at.replace("T", " ").slice(0, 16);
+
+      renderWeeklyBrief(data.weekly_brief);
+      renderConsiliumPanel(data.consilium_status, data.consilium_preview, data.consilium_html);
+      renderSymptomAsk(data.symptom_qa, data.symptom_answer_html);
+      renderCheckins(data.checkins, data.symptom_survey);
+      renderSystems(data.charts?.systems);
+      renderToday(data);
+      renderIntegrations(data.integrations);
+
+      document.getElementById("meds-body").innerHTML = (data.medications || []).map(m =>
+        `<tr><td>${m.name}</td><td>${trDose(m.dose)}</td><td>${trPurpose(m.purpose)}</td></tr>`).join("");
+
+      document.getElementById("tasks-body").innerHTML = (data.tasks_open || []).map(tk =>
+        `<tr><td>${tk.title_ru}</td><td class="priority-${tk.priority}">${trPriority(tk.priority)}</td><td>${trCategory(tk.category)}</td></tr>`).join("");
+
+      document.getElementById("labs-body").innerHTML = (data.lab_results || []).length
+        ? data.lab_results.map((l, i) => {
+            const v = l.value != null ? l.value : (l.value_text || "—");
+            const f = l.flag === "low" ? " ↓" : l.flag === "high" ? " ↑" : "";
+            const fc = l.flag === "low" ? "flag-low" : l.flag === "high" ? "flag-high" : "";
+            const fr = (l.freshness && l.freshness.message_ru) ? l.freshness.message_ru : "—";
+            return `<tr>
+              <td>${l.sample_date}</td><td>${l.test_name_ru}</td>
+              <td class="${fc}">${v} ${l.unit || ""}${f}</td><td>${fr}</td>
+              <td>${explainBtn(`data-lab-idx="${i}"`)}</td>
+            </tr>`;
+          }).join("")
+        : `<tr><td colspan="5" style="color:var(--muted)">${t("noLabs")}</td></tr>`;
+    }
+
+    async function reloadDashboard() {
+      try {
+        render(await loadData());
+      } catch (_) {
+        location.reload();
+      }
+    }
+
+    async function loadEngineStatus() {
+      try {
+        const r = await fetch(API_BASE + "/api/engine/status", { cache: "no-store" });
+        if (!r.ok) return;
+        const st = await r.json();
+        engineEnabled = !!st.enabled;
+        renderEnginePanel(st);
+      } catch (_) { /* ignore */ }
+    }
+
+    function renderEnginePanel(st) {
+      const stEl = document.getElementById("engine-status");
+      if (stEl) {
+        const head = st.enabled
+          ? `<span class="checkin-status-ok">${t("engineOn")} · ${esc(st.model || "")}</span>`
+          : `<span class="consilium-wait" style="display:inline-block">${t("engineOff")}</span>`;
+        const src = st.evidence_sources || {};
+        const srcList = [];
+        if (src.europepmc) srcList.push("Europe PMC");
+        if (src.pubmed) srcList.push("PubMed");
+        if (src.openevidence) srcList.push("OpenEvidence");
+        const srcLine = srcList.length
+          ? `<div style="color:var(--muted);font-size:0.8125rem;margin-top:0.35rem">${t("engineSources")}: ${srcList.join(" · ")}</div>`
+          : "";
+        stEl.innerHTML = head + srcLine;
+      }
+      const sel = document.getElementById("engine-model");
+      if (sel && st.model) sel.value = st.model;
+    }
+
+    async function saveEngineConfig() {
+      const key = (document.getElementById("engine-key")?.value || "").trim();
+      const model = document.getElementById("engine-model")?.value || "";
+      const stEl = document.getElementById("engine-status");
+      try {
+        const r = await fetch(API_BASE + "/api/engine/configure", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ api_key: key, model }),
+        });
+        const st = await r.json();
+        engineEnabled = !!st.enabled;
+        renderEnginePanel(st);
+        const keyEl = document.getElementById("engine-key");
+        if (keyEl) keyEl.value = "";
+        if (stEl && st.enabled) stEl.innerHTML = `<span class="checkin-status-ok">${t("engineSaved")} · ${esc(st.model || "")}</span>`;
+        await reloadDashboard();
+      } catch (_) {
+        if (stEl) stEl.innerHTML = `<span class="consilium-wait" style="display:inline-block">${t("consiliumError")}</span>`;
+      }
+    }
+
+    document.getElementById("btn-refresh").onclick = async () => {
+      const r = await apiPost("/api/refresh");
+      if (r?.ok) await reloadDashboard();
+    };
+    document.getElementById("btn-sync-hae").onclick = () => apiPost("/api/sync/apple-health").then(() => location.reload());
+    document.getElementById("btn-sync-hae2").onclick = () => apiPost("/api/sync/apple-health").then(() => location.reload());
+    document.getElementById("btn-oura").onclick = () => window.open((API_BASE || SERVER_URL) + "/oura/setup", "_blank");
+    async function openVisitPack() {
+      const base = API_BASE || SERVER_URL;
+      const urls = [
+        base + "/reports/visit-pack",
+        base + "/visit-pack",
+        base + "/reports/visit_pack_latest.html",
+      ];
+      for (const url of urls) {
+        try {
+          const r = await fetch(url, { method: "GET", cache: "no-store" });
+          if (r.ok) {
+            window.open(url, "_blank");
+            return;
+          }
+        } catch (_) { /* try next */ }
+      }
+      const r = await apiPost("/api/visit-pack");
+      if (r?.ok) {
+        window.open(base + "/reports/visit-pack", "_blank");
+        return;
+      }
+      alert(lang === "en"
+        ? "Restart start_zamira.command, then try again."
+        : "Перезапустите start_zamira.command, затем нажмите снова.");
+    }
+
+    async function openQuickConsilium() {
+      const base = API_BASE || SERVER_URL;
+      await apiPost("/api/consilium");
+      window.open(base + "/reports/consilium", "_blank");
+      alert(lang === "en"
+        ? "This is an auto draft only. For full doctor-level review use «Full doctor review» + Claude."
+        : "Это только авто-черновик. Для полного разбора как у врачей: «Полный разбор врачей» + Claude.");
+    }
+
+    function scrollToConsilium() {
+      activateTab("consilium");
+      document.getElementById("consilium-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    document.getElementById("btn-consilium").onclick = () => scrollToConsilium();
+    document.getElementById("link-go-consilium").onclick = () => scrollToConsilium();
+    document.getElementById("btn-claude-consilium").onclick = () => requestClaudeConsilium();
+    document.getElementById("btn-quick-consilium").onclick = () => openQuickConsilium();
+    document.getElementById("btn-symptom-ask").onclick = () => submitSymptomQuestion();
+    document.getElementById("btn-visit-pack").onclick = () => openVisitPack();
+    document.getElementById("btn-engine-save").onclick = () => saveEngineConfig();
+
+    (async () => {
+      bindExplainOverlay();
+      await ensureServerMode();
+      await loadEngineStatus();
+      try {
+        render(await loadData());
+        if (location.hash.includes("consilium")) scrollToConsilium();
+      } catch (e) {
+        document.getElementById("app").innerHTML = "<div class='panel'><p>Запустите: python scripts/refresh_dashboard.py</p></div>";
+      }
+    })();
+  </script>
+</body>
+</html>

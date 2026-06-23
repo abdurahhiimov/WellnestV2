@@ -1,0 +1,59 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+*.egg
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Build artifacts
+build/Wellnest.app
+build/Wellnest.dmg
+build/dmg-staging/
+build/AppIcon.icns
+
+# macOS
+.DS_Store
+**/.DS_Store
+*.DS_Store
+
+# Personal user data — never commit
+HEALTH/
+profiles/aziz/
+profiles/zamira/
+data/imports/
+data/user_*.db
+data/*.db
+
+# Reference DB is rebuilt from source JSON on first run
+data/reference/reference.db
+
+# Runtime / generated
+*.log
+*.pid
+profiles/*/health.db
+profiles/*/dashboard.json
+profiles/*/reports/
+profiles/*/uploads/
+profiles/*/new_labs/
+profiles/*/inbox/
+profiles/*/wearables/
+profiles/*/health_auto_export/
+profiles/*/integrations.json
+
+# Claude Code internals
+.claude/settings.local.json
+
+# Misc
+_archive/
+_petvita/
+skills-lock.json

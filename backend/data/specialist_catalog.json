@@ -1,0 +1,128 @@
+{
+  "version": 1,
+  "note": "Catalog of virtual specialists. The selector picks a panel from this list based on a profile's sex, age, conditions and concern tags. 'gp' is always included. Names/focus are provided per language (en, ru).",
+  "specialists": [
+    {
+      "id": "gp",
+      "always": true,
+      "name": { "en": "Family doctor", "ru": "Семейный врач" },
+      "focus": {
+        "en": "summary plan: priority 1, priority 2, safety net (red flags not to wait on)",
+        "ru": "сводный план: приоритет 1, приоритет 2, safety net (красные флаги, при которых не ждать)"
+      },
+      "rules": {}
+    },
+    {
+      "id": "endo",
+      "name": { "en": "Endocrinologist", "ru": "Эндокринолог" },
+      "focus": {
+        "en": "thyroid, pituitary, hormonal axes, prolactin, diabetes, medication dosing",
+        "ru": "щитовидная железа, гипофиз, гормональные оси, пролактин, диабет, дозы препаратов"
+      },
+      "rules": {
+        "condition_codes": ["hypothyroidism", "hashimoto", "hyperthyroidism", "prolactinoma", "pituitary", "diabetes", "prediabetes", "pcos", "thyroid_nodule", "adrenal"],
+        "concern_tags": ["fatigue", "weight", "thyroid", "hormones", "blood_sugar"]
+      }
+    },
+    {
+      "id": "gyn",
+      "name": { "en": "Gynecologist", "ru": "Гинеколог" },
+      "focus": {
+        "en": "menopause, HRT, estradiol/progesterone, endometrium, mammography, reproductive health",
+        "ru": "менопауза, ЗГТ, эстрадиол/прогестерон, эндометрий, маммография, репродуктивное здоровье"
+      },
+      "rules": {
+        "sex": ["female"],
+        "condition_codes": ["menopause", "perimenopause", "endometriosis", "pcos", "fibroids", "osteoporosis_postmenopausal"],
+        "concern_tags": ["menopause", "menstrual", "reproductive", "hormones"]
+      }
+    },
+    {
+      "id": "uro",
+      "name": { "en": "Urologist", "ru": "Уролог" },
+      "focus": {
+        "en": "prostate, urinary tract, male reproductive and hormonal health, testosterone",
+        "ru": "простата, мочевыводящие пути, мужское репродуктивное и гормональное здоровье, тестостерон"
+      },
+      "rules": {
+        "sex": ["male"],
+        "condition_codes": ["prostate", "bph", "low_testosterone"],
+        "concern_tags": ["urinary", "prostate", "reproductive"]
+      }
+    },
+    {
+      "id": "cardio",
+      "name": { "en": "Cardiologist", "ru": "Кардиолог" },
+      "focus": {
+        "en": "blood pressure, lipids, heart rhythm, cardiovascular risk",
+        "ru": "давление, липиды, ритм сердца, сердечно-сосудистый риск"
+      },
+      "rules": {
+        "condition_codes": ["hypertension", "high_cholesterol", "arrhythmia", "heart_disease", "atrial_fibrillation"],
+        "concern_tags": ["blood_pressure", "heart", "cholesterol", "palpitations"],
+        "age_min": 50
+      }
+    },
+    {
+      "id": "neuro",
+      "name": { "en": "Neurologist", "ru": "Невролог" },
+      "focus": {
+        "en": "headaches, brain MRI, pituitary adenoma & vision, sleep, cognitive complaints",
+        "ru": "головные боли, МРТ головного мозга, аденома гипофиза и зрение, сон, когнитивные жалобы"
+      },
+      "rules": {
+        "condition_codes": ["migraine", "prolactinoma", "pituitary", "epilepsy", "neuropathy"],
+        "concern_tags": ["headache", "sleep", "memory", "dizziness", "numbness"]
+      }
+    },
+    {
+      "id": "nutri",
+      "name": { "en": "Nutritionist", "ru": "Нутрициолог" },
+      "focus": {
+        "en": "vitamin/mineral deficiencies, ferritin, D3, B12, supplement-drug interactions, diet",
+        "ru": "дефициты витаминов/минералов, ферритин, D3, B12, взаимодействия добавок с препаратами, питание"
+      },
+      "rules": {
+        "always_if_supplements": true,
+        "condition_codes": ["anemia", "vitamin_deficiency", "obesity"],
+        "concern_tags": ["diet", "weight", "supplements", "fatigue"]
+      }
+    },
+    {
+      "id": "ortho",
+      "name": { "en": "Orthopedist", "ru": "Ортопед" },
+      "focus": {
+        "en": "musculoskeletal system, bone density, osteoporosis, joints, physical activity",
+        "ru": "костно-мышечная система, плотность костей, остеопороз, суставы, физическая активность"
+      },
+      "rules": {
+        "condition_codes": ["osteoporosis", "osteopenia", "arthritis", "joint_pain"],
+        "concern_tags": ["joints", "bones", "back_pain", "mobility"]
+      }
+    },
+    {
+      "id": "gastro",
+      "name": { "en": "Gastroenterologist", "ru": "Гастроэнтеролог" },
+      "focus": {
+        "en": "digestion, liver, gut, reflux, IBS, nutrient absorption",
+        "ru": "пищеварение, печень, кишечник, рефлюкс, СРК, всасывание нутриентов"
+      },
+      "rules": {
+        "condition_codes": ["gerd", "ibs", "ibd", "fatty_liver", "celiac"],
+        "concern_tags": ["digestion", "stomach", "bloating", "reflux"]
+      }
+    },
+    {
+      "id": "mental",
+      "name": { "en": "Psychologist", "ru": "Психолог" },
+      "focus": {
+        "en": "mood, anxiety, stress, sleep hygiene, coping strategies (non-prescribing support)",
+        "ru": "настроение, тревога, стресс, гигиена сна, стратегии совладания (без назначений)"
+      },
+      "rules": {
+        "condition_codes": ["anxiety", "depression", "insomnia"],
+        "concern_tags": ["mood", "anxiety", "stress", "sleep"]
+      }
+    }
+  ]
+}

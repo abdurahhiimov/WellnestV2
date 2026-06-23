@@ -1,0 +1,51 @@
+{
+  "version": "1.0",
+  "medications": [
+    {
+      "generic_en": "cabergoline",
+      "brand_ru": "Достинекс",
+      "brand_en": "Dostinex",
+      "rxnorm_search": "cabergoline",
+      "purpose_ru": "Снижение пролактина при пролактиноме",
+      "monitoring_labs": ["prolactin"],
+      "monitoring_imaging": ["МРТ гипофиза по графику эндокринолога"],
+      "key_points_ru": [
+        "Принимать строго по схеме эндокринолога (часто 1–2 раза в неделю).",
+        "Контроль пролактина каждые 3–6 мес на стабильной дозе.",
+        "Сообщить врачу о головной боли, нарушениях зрения, гипотонии, тошноте."
+      ],
+      "related_diagnoses": ["prolactinoma"],
+      "sources": ["Endocrine Society prolactinoma guideline 2011"]
+    },
+    {
+      "generic_en": "levothyroxine",
+      "brand_ru": "Эутирокс",
+      "brand_en": "Euthyrox / Synthroid",
+      "rxnorm_search": "levothyroxine",
+      "purpose_ru": "Заместительная терапия гипотиреоза (Хашимото)",
+      "monitoring_labs": ["tsh", "ft4"],
+      "key_points_ru": [
+        "Принимать натощак, за 30–60 мин до еды; не менять дозу без врача.",
+        "Контроль ТТГ через 6–8 недель после смены дозы.",
+        "Кальций, железо, некоторые добавки — отдельно от таблетки (интервал 4 ч)."
+      ],
+      "related_diagnoses": ["hashimoto"],
+      "sources": ["ATA hypothyroidism guideline 2014"]
+    },
+    {
+      "generic_en": "estradiol",
+      "brand_ru": "Дивигель",
+      "brand_en": "Divigel / estradiol gel",
+      "rxnorm_search": "estradiol",
+      "purpose_ru": "ЗГТ при менопаузе (трансдермальный гель)",
+      "monitoring_labs": ["estradiol"],
+      "key_points_ru": [
+        "Наносить на кожу по схеме гинеколога/эндокринолога.",
+        "Контроль эстрадиола и симптомов менопаузы по плану врача.",
+        "Обсудить с врачом риски/пользу ЗГТ при индивидуальном анамнезе."
+      ],
+      "related_diagnoses": ["menopause"],
+      "sources": ["NAMS 2022 hormone therapy position statement"]
+    }
+  ]
+}
