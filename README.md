@@ -1,84 +1,85 @@
-# Zamira Health
+# Wellnest
 
-Local-first health companion for macOS. Uses **Claude Desktop Pro** (no API key) via MCP.
+Local-first personal health dashboard for macOS. Tracks lab results, medications, symptoms, and wearable data — all stored privately on your own machine.
 
-## Workflow
+## What it is
 
-1. **Develop & test** on your MacBook (`ACTIVE_PROFILE=zamira` or `aziz`).
-2. **Deliver** a `.dmg` / install folder to Zamira with her profile only.
-3. **Later**: add your profile (`profiles/aziz/`) — same app, different data.
+- **React + Vite** frontend (dark-mode UI, Russian/English)
+- **FastAPI** backend running locally on port 8787
+- **SQLite** per-profile health database
+- **120-test clinical reference DB** with authoritative ranges (CBC, CMP, lipids, thyroid, vitamins, hormones, coagulation, QuantiFERON TB, and more)
+- Optional **AI explanations** via Claude API (bring your own API key)
 
-## Deliver to MacBook (DMG)
+No cloud. No accounts. Your data never leaves your laptop.
 
-Build an installable `.app` + `.dmg` with your logo:
+## macOS App (recommended)
+
+Download `Wellnest.dmg`, drag to Applications, double-click.
+
+On first launch it automatically:
+1. Creates a Python virtual environment
+2. Installs all dependencies
+3. Builds the reference database
+4. Opens the dashboard in your browser
+
+Requires **Python 3.10+** (install via `brew install python@3.12` if not present) and **macOS 13+**.
+
+## Development setup
+
+```bash
+# Clone
+git clone https://github.com/abdurahhiimov/WellnestV2.git
+cd WellnestV2
+
+# Python backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements-app.txt
+
+# Build reference DB (offline, from bundled source JSON)
+python scripts/init_db.py
+
+# Start backend (port 8787)
+python scripts/start_server.py
+
+# Frontend (separate terminal)
+cd frontend
+npm install
+npm run dev        # → http://localhost:5173
+```
+
+The Vite dev server proxies API calls to the FastAPI backend automatically.
+
+## Build the DMG
 
 ```bash
 bash scripts/build_dmg.sh
-# → build/ZamiraHealth.dmg
+# → build/Wellnest.dmg
 ```
-
-Install: open DMG → drag **Zamira Health** to **Applications** → first launch: right-click → Open.
-
-The app starts the local server and opens the dashboard in Safari (no Terminal).
-
-**Note:** Claude Desktop + MCP setup (`python scripts/install_mcp.py`) is still one-time manual step — see `packaging/INSTALL_RU.txt`.
-
-## Quick start (development)
-
-```bash
-# Install Python deps
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-
-# Init database + seed Zamira profile
-python scripts/init_db.py --profile zamira
-
-# Register MCP server with Claude Desktop (backs up existing config)
-python scripts/install_mcp.py
-
-# Restart Claude Desktop, then try:
-# "Use zamira_health to show patient profile and pending tasks"
-```
-
-## Data locations
-
-| Profile | Health folder (uploads) | Database |
-|---------|-------------------------|----------|
-| `zamira` | `~/Desktop/HEALTH/` | `~/Desktop/HEALTH/data/health.db` |
-| `aziz` (later) | `~/Desktop/HEALTH-AZIZ/` | `~/Desktop/HEALTH-AZIZ/data/health.db` |
-
-Override with env: `ZAMIRA_HEALTH_ROOT`, `ACTIVE_PROFILE`.
 
 ## Project layout
 
 ```
-profiles/          # Per-person medical context (JSON)
-backend/           # SQLite + MCP server
-dashboard/         # Static dashboard (Phase 1)
-scripts/           # init_db, install_mcp, import_xlsx
+backend/          # FastAPI server, SQLite health DB, AI engine
+frontend/         # React + Vite + shadcn/ui dashboard
+data/
+  reference/
+    source/       # Curated JSON: labs, medications, guidelines
+scripts/          # init_db, build_dmg, import_labs, etc.
+profiles/
+  default/        # Template profile (copy to get started)
+packaging/        # macOS .app launcher and Info.plist
 ```
 
-## MCP tools (Claude Desktop)
+## AI features (optional)
 
-- `get_patient_profile` — diagnoses, meds, demographics
-- `get_lab_results` — with freshness warnings
-- `get_tasks` — pending follow-ups
-- `get_medications` — current stack
-- `get_problem_list` — P001–P006 style tracking
-- `list_health_files` — files in HEALTH folder
-- `import_chat_datapoints` — save labs/symptoms/tasks from chat attachments
-- `list_inbox_files` / `process_inbox_files` — process dropped files in inbox/
-- `get_upload_workflow_instructions` — schema for Claude when user attaches files
-- `get_recent_datapoints` — audit log of imports
-- `get_clinical_context` / `lookup_lab_reference` / `lookup_medication_reference` — local reference DB (RxNorm, guidelines)
-- `get_reference_db_status` — verify reference.db is built
+Set `ANTHROPIC_API_KEY` in your environment to enable:
+- Plain-language explanations for every lab result
+- AI consilium (multi-specialist health review)
+- Symptom Q&A
 
-Run once (with network for RxNorm drug interactions):
-```bash
-python scripts/download_reference_db.py
-```
+Without a key the app works fully — AI sections are hidden.
 
 ## Disclaimer
 
-Wellness and health-literacy tool only. Not a medical device. Always consult a physician.
+Wellness and health-literacy tool only. Not a medical device. Always consult a qualified physician.
